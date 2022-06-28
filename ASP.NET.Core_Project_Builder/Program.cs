@@ -1,6 +1,6 @@
 ﻿using ASP.NET.Core_Project_Builder;
 
-var inputs = false;
+var inputs = true;
 
 while (!inputs)
 {
@@ -41,3 +41,4 @@ while (!inputs)
 }
 
 await CodeGenerator.GenerateRootFolder();
+await CodeGenerator.GenerateSharedProject();
