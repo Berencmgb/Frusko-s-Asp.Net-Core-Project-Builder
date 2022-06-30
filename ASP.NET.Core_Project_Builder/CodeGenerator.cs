@@ -10,7 +10,7 @@ namespace ASP.NET.Core_Project_Builder
 {
     public static class CodeGenerator
     {
-        public static string SolutionPrefix { get; set; } = "Blink";
+        public static string SolutionPrefix { get; set; } = "Blink2";
         public static string SolutionPath { get; set; } = @"C:\Users\Beren\Documents\Projects\Test Projects";
 
         private static string _absolutePath { get => $"{SolutionPath}\\{SolutionPrefix}"; }
@@ -65,8 +65,23 @@ namespace ASP.NET.Core_Project_Builder
             await InvokePowershell(powerShell);
 
 
+            powerShell.Commands.AddScript($"dotnet add {_absolutePath.Replace(" ", "` ")}\\{sharedNamespace} package Microsoft.Extensions.Http");
+            Console.WriteLine("STEP: Adding Microsoft Extensions Http");
+            await InvokePowershell(powerShell);
+
+
+            powerShell.Commands.AddScript($"dotnet add {_absolutePath.Replace(" ", "` ")}\\{sharedNamespace} package Microsoft.AspNetCore.Authentication.JwtBearer");
+            Console.WriteLine("STEP: Adding Microsoft AspNetCore Authentication JwtBearer");
+            await InvokePowershell(powerShell);
+
+
             powerShell.Commands.AddScript($"dotnet add {_absolutePath.Replace(" ", "` ")}\\{sharedNamespace} package Microsoft.EntityFrameworkCore");
             Console.WriteLine("STEP: Adding Entity Framework Core");
+            await InvokePowershell(powerShell);
+
+
+            powerShell.Commands.AddScript($"dotnet add {_absolutePath.Replace(" ", "` ")}\\{sharedNamespace} package Newtonsoft.Json");
+            Console.WriteLine("STEP: Adding Newtonsoft Json");
             await InvokePowershell(powerShell);
 
 
@@ -139,13 +154,22 @@ namespace ASP.NET.Core_Project_Builder
             var utilitiesNamespace = utiltiesPath.Replace(@"\", ".");
 
             Console.WriteLine("STEP: Generating shared db context");
-            await File.WriteAllTextAsync(@$"{_absolutePath}\\{utiltiesPath}\\SharedDBContext.cs", Boilerplate.SharedDBContext.Replace("{namespace}", utilitiesNamespace));
+            await File.WriteAllTextAsync(@$"{_absolutePath}\\{utiltiesPath}\\SharedDBContext.cs", Boilerplate.SharedDBContext.Replace("{namespace}", utilitiesNamespace).Replace("{project}", SolutionPrefix));
 
             Console.WriteLine("STEP: Generating base repository");
-            await File.WriteAllTextAsync(@$"{_absolutePath}\\{utiltiesPath}\\BaseRepository.cs", Boilerplate.BaseRepositoryTemplate.Replace("{namespace}", utilitiesNamespace));
+            await File.WriteAllTextAsync(@$"{_absolutePath}\\{utiltiesPath}\\BaseRepository.cs", Boilerplate.BaseRepositoryTemplate.Replace("{namespace}", utilitiesNamespace).Replace("{project}", SolutionPrefix));
 
             Console.WriteLine("STEP: Generating base service");
-            await File.WriteAllTextAsync(@$"{_absolutePath}\\{utiltiesPath}\\BaseService.cs", Boilerplate.BaseServiceTemplate.Replace("{namespace}", utilitiesNamespace));
+            await File.WriteAllTextAsync(@$"{_absolutePath}\\{utiltiesPath}\\BaseService.cs", Boilerplate.BaseServiceTemplate.Replace("{namespace}", utilitiesNamespace).Replace("{project}", SolutionPrefix));
+
+            Console.WriteLine("STEP: Generating base service client");
+            await File.WriteAllTextAsync(@$"{_absolutePath}\\{utiltiesPath}\\BaseServiceClient.cs", Boilerplate.BaseServiceClientTemplate.Replace("{namespace}", utilitiesNamespace).Replace("{project}", SolutionPrefix));
+
+            Console.WriteLine("STEP: Generating http payload");
+            await File.WriteAllTextAsync(@$"{_absolutePath}\\{utiltiesPath}\\HttpPayload.cs", Boilerplate.HttpPayloadTemplate.Replace("{namespace}", utilitiesNamespace));
+
+            Console.WriteLine("STEP: Generating postbody");
+            await File.WriteAllTextAsync(@$"{_absolutePath}\\{utiltiesPath}\\PostBody.cs", Boilerplate.PostBodyTemplate.Replace("{namespace}", utilitiesNamespace).Replace("{project}", SolutionPrefix));
 
             #endregion
 
@@ -164,10 +188,16 @@ namespace ASP.NET.Core_Project_Builder
             Console.WriteLine("STEP: Generating string helpers");
             await File.WriteAllTextAsync(@$"{_absolutePath}\\{helpersPath}\\StringHelpers.cs", Boilerplate.StringHelpersTemplate.Replace("{namespace}", helpersNamespace));
 
+            Console.WriteLine("STEP: Generating expression evaluator");
+            await File.WriteAllTextAsync(@$"{_absolutePath}\\{helpersPath}\\DynamicExpressionEvaluator.cs", Boilerplate.DynamicExpressionEvaluatorTemplate.Replace("{namespace}", helpersNamespace));
+
+            Console.WriteLine("STEP: Generating expression searcher");
+            await File.WriteAllTextAsync(@$"{_absolutePath}\\{helpersPath}\\DynamicExpressionSearcher.cs", Boilerplate.DynamicExpressionSearcherTemplate.Replace("{namespace}", helpersNamespace));
+
             #endregion
 
-            // base service client
-            // base service
+            // postbody
+            // http payload
 
 
             return;
