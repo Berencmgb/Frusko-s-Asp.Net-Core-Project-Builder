@@ -10,7 +10,7 @@ namespace ASP.NET.Core_Project_Builder
 {
     public static class CodeGenerator
     {
-        public static string SolutionPrefix { get; set; } = "Blink2";
+        public static string SolutionPrefix { get; set; } = "Blink";
         public static string SolutionPath { get; set; } = @"C:\Users\Beren\Documents\Projects\Test Projects";
 
         private static string _absolutePath { get => $"{SolutionPath}\\{SolutionPrefix}"; }
@@ -171,7 +171,12 @@ namespace ASP.NET.Core_Project_Builder
             Console.WriteLine("STEP: Generating postbody");
             await File.WriteAllTextAsync(@$"{_absolutePath}\\{utiltiesPath}\\PostBody.cs", Boilerplate.PostBodyTemplate.Replace("{namespace}", utilitiesNamespace).Replace("{project}", SolutionPrefix));
 
+            Console.WriteLine("STEP: Generating web constants");
+            await File.WriteAllTextAsync(@$"{_absolutePath}\\{utiltiesPath}\\PostBody.cs", Boilerplate.WebConstantsTemplate.Replace("{namespace}", utilitiesNamespace).Replace("{project}", SolutionPrefix).Replace("{new_id}", Guid.NewGuid().ToString()));
+
             #endregion
+
+            #region Generating Helpers
 
             var helpersPath = @$"{sharedNamespace}\Helpers";
 
@@ -181,12 +186,13 @@ namespace ASP.NET.Core_Project_Builder
                 Console.WriteLine($"Created shared models directory");
             }
 
-            var helpersNamespace = helpersPath.Replace(@"\", ".");
-
-            #region Generating Helpers
+            var helpersNamespace = helpersPath.Replace(@"\", "."); 
 
             Console.WriteLine("STEP: Generating string helpers");
             await File.WriteAllTextAsync(@$"{_absolutePath}\\{helpersPath}\\StringHelpers.cs", Boilerplate.StringHelpersTemplate.Replace("{namespace}", helpersNamespace));
+
+            Console.WriteLine("STEP: Generating string helpers");
+            await File.WriteAllTextAsync(@$"{_absolutePath}\\{helpersPath}\\ExpressionHelpers.cs", Boilerplate.ExpressionHelpersTemplate.Replace("{namespace}", helpersNamespace));
 
             Console.WriteLine("STEP: Generating expression evaluator");
             await File.WriteAllTextAsync(@$"{_absolutePath}\\{helpersPath}\\DynamicExpressionEvaluator.cs", Boilerplate.DynamicExpressionEvaluatorTemplate.Replace("{namespace}", helpersNamespace));
@@ -195,9 +201,6 @@ namespace ASP.NET.Core_Project_Builder
             await File.WriteAllTextAsync(@$"{_absolutePath}\\{helpersPath}\\DynamicExpressionSearcher.cs", Boilerplate.DynamicExpressionSearcherTemplate.Replace("{namespace}", helpersNamespace));
 
             #endregion
-
-            // postbody
-            // http payload
 
 
             return;

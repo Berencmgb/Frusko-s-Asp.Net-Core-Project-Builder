@@ -529,6 +529,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using {project}.Shared.Models;
+using {project}.Shared.Helpers;
 
 namespace {namespace}
 {
@@ -835,6 +836,7 @@ namespace {namespace}
 @"using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Newtonsoft.Json;
 using {project}.Shared.Models;
+using {project}.Shared.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -1092,7 +1094,7 @@ namespace {namespace}
         
         protected async Task<HttpClient> GetClient(HttpPayload payload)
         {
-            var client = _httpClientFactory.CreateClient(CVifyWebConstants.ClientScope);
+            var client = _httpClientFactory.CreateClient({project}WebConstants.ClientScope);
         
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(JwtBearerDefaults.AuthenticationScheme, payload.SecurityToken);
         
@@ -1136,6 +1138,32 @@ namespace {namespace}
     
         public Task<Result> DeleteAsync(HttpPayload payload, string reference);
     }
+}";
+
+        public const string WebConstantsTemplate =
+@"using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
+
+namespace {namespace}
+{
+    public static class {project}WebConstants
+    {
+        public static string ClientScope { get => ""{project}-Web-Client""; }
+        public static string SecurityKey { get; } = ""{new_id}"";
+
+        public static SymmetricSecurityKey SymmetricSecurityKey { get; } = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(SecurityKey));
+
+        public static string LoginEndpoint { get => """"; }
+        public static string RegisterEndpoint { get => """"; }
+
+        public static JwtSecurityToken Token { get; set; }
+
+        public static string LocalHostUrl { get => """"; }
+        public static string HostUrl { get; set; } = LocalHostUrl;
+        public static string LiveUrl { get; set; }
+    }
+}
 }";
 
         public const string DynamicExpressionEvaluatorTemplate =
