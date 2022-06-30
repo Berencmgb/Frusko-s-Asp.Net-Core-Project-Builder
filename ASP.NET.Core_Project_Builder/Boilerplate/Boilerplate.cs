@@ -1,6 +1,6 @@
-﻿namespace ASP.NET.Core_Project_Builder
+﻿namespace ASP.NET.Core_Project_Builder.Boilerplate
 {
-    public static class Boilerplate
+    public static class SharedTemplates
     {
         public const string BaseEntityTemplate =
 @"namespace {namespace}
@@ -96,7 +96,7 @@ namespace {namespace}
     }
 }";
 
-        public const string SharedDBContext =
+        public const string SharedDbContext =
 @"using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -109,9 +109,9 @@ using {project}.Shared.Models;
 namespace {namespace}
 {
 
-    public class SharedDBContext : IdentityDbContext<User, IdentityRole<int>, int>
+    public class SharedDbContext : IdentityDbContext<User, IdentityRole<int>, int>
     {
-        public SharedDBContext(DbContextOptions<SharedDBContext> options) : base(options)
+        public SharedDbContext(DbContextOptions options) : base(options)
         {
         }
 
@@ -147,14 +147,14 @@ namespace {namespace}
 {
     public class BaseRepository<TEntity, TRepository> : IBaseRepository<TEntity>, IDisposable where TEntity : class, IBaseEntity
     {
-        public SharedDBContext Context;
+        public SharedDbContext Context;
         public DbSet<TEntity> Table;
         protected readonly IMapper _mapper;
 
         public List<string> Includes { get; set; } = new List<string>();
         protected ILogger<TRepository> _logger;
 
-        public BaseRepository(SharedDBContext context, ILogger<TRepository> logger,
+        public BaseRepository(SharedDbContext context, ILogger<TRepository> logger,
             IMapper mapper)
         {
             Context = context;

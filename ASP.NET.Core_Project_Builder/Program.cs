@@ -42,3 +42,4 @@ while (!inputs)
 
 await CodeGenerator.GenerateRootFolder();
 await CodeGenerator.GenerateSharedProject();
+await CodeGenerator.GenerateEntityProject();

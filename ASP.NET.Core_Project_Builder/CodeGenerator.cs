@@ -1,4 +1,5 @@
-﻿using Microsoft.Build.Construction;
+﻿using ASP.NET.Core_Project_Builder.Boilerplate;
+using Microsoft.Build.Construction;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,10 +11,13 @@ namespace ASP.NET.Core_Project_Builder
 {
     public static class CodeGenerator
     {
-        public static string SolutionPrefix { get; set; } = "Blink";
+        public static string SolutionPrefix { get; set; } = "Blink2";
         public static string SolutionPath { get; set; } = @"C:\Users\Beren\Documents\Projects\Test Projects";
 
         private static string _absolutePath { get => $"{SolutionPath}\\{SolutionPrefix}"; }
+
+        private static string _entityNamespace { get => $"{SolutionPrefix}.Entity"; }
+        private static string _sharedNamespace { get => $"{SolutionPrefix}.Shared"; }
 
 
         /// <summary>
@@ -60,6 +64,10 @@ namespace ASP.NET.Core_Project_Builder
             Console.WriteLine("STEP: Generating Shared Project");
             await InvokePowershell(powerShell);
 
+            powerShell.Commands.AddScript($"dotnet sln {_absolutePath.Replace(" ", "` ")} add {_absolutePath.Replace(" ", "` ")}\\{sharedNamespace}");
+            Console.WriteLine("STEP: Adding Shared Project to Solution");
+            await InvokePowershell(powerShell);
+
             Console.WriteLine("Removing Class1.cs");
 
             if (File.Exists($"{_absolutePath}\\{sharedNamespace}\\Class1.cs"))
@@ -103,18 +111,16 @@ namespace ASP.NET.Core_Project_Builder
             Console.WriteLine("STEP: Adding Dynamic Linq");
             await InvokePowershell(powerShell);
 
+
             powerShell.Commands.AddScript($"dotnet add {_absolutePath.Replace(" ", "` ")}\\{sharedNamespace} package Microsoft.AspNetCore.Identity");
             Console.WriteLine("STEP: Adding Microsoft Identity");
             await InvokePowershell(powerShell);
+
 
             powerShell.Commands.AddScript($"dotnet add {_absolutePath.Replace(" ", "` ")}\\{sharedNamespace} package Microsoft.AspNetCore.Identity.EntityFrameworkCore");
             Console.WriteLine("STEP: Adding Microsoft Identity Entity Framework Core");
             await InvokePowershell(powerShell);
 
-
-            powerShell.Commands.AddScript($"dotnet sln {_absolutePath.Replace(" ", "` ")} add {_absolutePath.Replace(" ", "` ")}\\{sharedNamespace}");
-            Console.WriteLine("STEP: Adding Shared Project to Solution");
-            await InvokePowershell(powerShell);
 
             powerShell.Commands.AddScript($"dotnet restore {_absolutePath.Replace(" ", "` ")}\\{sharedNamespace}");
             Console.WriteLine("STEP: Restoring Nuget Packages");
@@ -136,19 +142,19 @@ namespace ASP.NET.Core_Project_Builder
             var modelNamespace = modelsPath.Replace(@"\", ".");
 
             Console.WriteLine("STEP: Generating base entity");
-            await File.WriteAllTextAsync(@$"{_absolutePath}\\{modelsPath}\\BaseEntity.cs", Boilerplate.BaseEntityTemplate.Replace("{namespace}", modelNamespace));
+            await File.WriteAllTextAsync(@$"{_absolutePath}\\{modelsPath}\\BaseEntity.cs", SharedTemplates.BaseEntityTemplate.Replace("{namespace}", modelNamespace));
 
             Console.WriteLine("STEP: Generating base dto");
-            await File.WriteAllTextAsync(@$"{_absolutePath}\\{modelsPath}\\BaseDTO.cs", Boilerplate.BaseDTOTemplate.Replace("{namespace}", modelNamespace));
+            await File.WriteAllTextAsync(@$"{_absolutePath}\\{modelsPath}\\BaseDTO.cs", SharedTemplates.BaseDTOTemplate.Replace("{namespace}", modelNamespace));
 
             Console.WriteLine("STEP: Generating result");
-            await File.WriteAllTextAsync(@$"{_absolutePath}\\{modelsPath}\\Result.cs", Boilerplate.ResultTemplate.Replace("{namespace}", modelNamespace));
+            await File.WriteAllTextAsync(@$"{_absolutePath}\\{modelsPath}\\Result.cs", SharedTemplates.ResultTemplate.Replace("{namespace}", modelNamespace));
 
             Console.WriteLine("STEP: Generating pagination");
-            await File.WriteAllTextAsync(@$"{_absolutePath}\\{modelsPath}\\Pagination.cs", Boilerplate.PaginationTemplate.Replace("{namespace}", modelNamespace));
+            await File.WriteAllTextAsync(@$"{_absolutePath}\\{modelsPath}\\Pagination.cs", SharedTemplates.PaginationTemplate.Replace("{namespace}", modelNamespace));
 
             Console.WriteLine("STEP: Generating user");
-            await File.WriteAllTextAsync(@$"{_absolutePath}\\{modelsPath}\\User.cs", Boilerplate.UserTemplate.Replace("{namespace}", modelNamespace));
+            await File.WriteAllTextAsync(@$"{_absolutePath}\\{modelsPath}\\User.cs", SharedTemplates.UserTemplate.Replace("{namespace}", modelNamespace));
 
             #endregion
 
@@ -167,28 +173,28 @@ namespace ASP.NET.Core_Project_Builder
             var securityKey = Guid.NewGuid().ToString();
 
             Console.WriteLine("STEP: Generating shared db context");
-            await File.WriteAllTextAsync(@$"{_absolutePath}\\{utiltiesPath}\\SharedDBContext.cs", Boilerplate.SharedDBContext.Replace("{namespace}", utilitiesNamespace).Replace("{project}", SolutionPrefix));
+            await File.WriteAllTextAsync(@$"{_absolutePath}\\{utiltiesPath}\\SharedDbContext.cs", SharedTemplates.SharedDbContext.Replace("{namespace}", utilitiesNamespace).Replace("{project}", SolutionPrefix));
 
             Console.WriteLine("STEP: Generating base repository");
-            await File.WriteAllTextAsync(@$"{_absolutePath}\\{utiltiesPath}\\BaseRepository.cs", Boilerplate.BaseRepositoryTemplate.Replace("{namespace}", utilitiesNamespace).Replace("{project}", SolutionPrefix));
+            await File.WriteAllTextAsync(@$"{_absolutePath}\\{utiltiesPath}\\BaseRepository.cs", SharedTemplates.BaseRepositoryTemplate.Replace("{namespace}", utilitiesNamespace).Replace("{project}", SolutionPrefix));
 
             Console.WriteLine("STEP: Generating base service");
-            await File.WriteAllTextAsync(@$"{_absolutePath}\\{utiltiesPath}\\BaseService.cs", Boilerplate.BaseServiceTemplate.Replace("{namespace}", utilitiesNamespace).Replace("{project}", SolutionPrefix));
+            await File.WriteAllTextAsync(@$"{_absolutePath}\\{utiltiesPath}\\BaseService.cs", SharedTemplates.BaseServiceTemplate.Replace("{namespace}", utilitiesNamespace).Replace("{project}", SolutionPrefix));
 
             Console.WriteLine("STEP: Generating base service client");
-            await File.WriteAllTextAsync(@$"{_absolutePath}\\{utiltiesPath}\\BaseServiceClient.cs", Boilerplate.BaseServiceClientTemplate.Replace("{namespace}", utilitiesNamespace).Replace("{project}", SolutionPrefix));
+            await File.WriteAllTextAsync(@$"{_absolutePath}\\{utiltiesPath}\\BaseServiceClient.cs", SharedTemplates.BaseServiceClientTemplate.Replace("{namespace}", utilitiesNamespace).Replace("{project}", SolutionPrefix));
 
             Console.WriteLine("STEP: Generating http payload");
-            await File.WriteAllTextAsync(@$"{_absolutePath}\\{utiltiesPath}\\HttpPayload.cs", Boilerplate.HttpPayloadTemplate.Replace("{namespace}", utilitiesNamespace));
+            await File.WriteAllTextAsync(@$"{_absolutePath}\\{utiltiesPath}\\HttpPayload.cs", SharedTemplates.HttpPayloadTemplate.Replace("{namespace}", utilitiesNamespace));
 
             Console.WriteLine("STEP: Generating postbody");
-            await File.WriteAllTextAsync(@$"{_absolutePath}\\{utiltiesPath}\\PostBody.cs", Boilerplate.PostBodyTemplate.Replace("{namespace}", utilitiesNamespace).Replace("{project}", SolutionPrefix));
+            await File.WriteAllTextAsync(@$"{_absolutePath}\\{utiltiesPath}\\PostBody.cs", SharedTemplates.PostBodyTemplate.Replace("{namespace}", utilitiesNamespace).Replace("{project}", SolutionPrefix));
 
             Console.WriteLine("STEP: Generating web constants");
-            await File.WriteAllTextAsync(@$"{_absolutePath}\\{utiltiesPath}\\{SolutionPrefix}WebConstants.cs", Boilerplate.WebConstantsTemplate.Replace("{namespace}", utilitiesNamespace).Replace("{project}", SolutionPrefix).Replace("{new_id}", securityKey));
+            await File.WriteAllTextAsync(@$"{_absolutePath}\\{utiltiesPath}\\{SolutionPrefix}WebConstants.cs", SharedTemplates.WebConstantsTemplate.Replace("{namespace}", utilitiesNamespace).Replace("{project}", SolutionPrefix).Replace("{new_id}", securityKey));
 
             Console.WriteLine("STEP: Generating api constants");
-            await File.WriteAllTextAsync(@$"{_absolutePath}\\{utiltiesPath}\\{SolutionPrefix}ApiConstants.cs", Boilerplate.ApiConstantsTemplate.Replace("{namespace}", utilitiesNamespace).Replace("{project}", SolutionPrefix).Replace("{new_id}", securityKey));
+            await File.WriteAllTextAsync(@$"{_absolutePath}\\{utiltiesPath}\\{SolutionPrefix}ApiConstants.cs", SharedTemplates.ApiConstantsTemplate.Replace("{namespace}", utilitiesNamespace).Replace("{project}", SolutionPrefix).Replace("{new_id}", securityKey));
 
             #endregion
 
@@ -205,19 +211,19 @@ namespace ASP.NET.Core_Project_Builder
             var helpersNamespace = helpersPath.Replace(@"\", "."); 
 
             Console.WriteLine("STEP: Generating string helpers");
-            await File.WriteAllTextAsync(@$"{_absolutePath}\\{helpersPath}\\StringHelpers.cs", Boilerplate.StringHelpersTemplate.Replace("{namespace}", helpersNamespace));
+            await File.WriteAllTextAsync(@$"{_absolutePath}\\{helpersPath}\\StringHelpers.cs", SharedTemplates.StringHelpersTemplate.Replace("{namespace}", helpersNamespace));
 
             Console.WriteLine("STEP: Generating expression helpers");
-            await File.WriteAllTextAsync(@$"{_absolutePath}\\{helpersPath}\\ExpressionHelpers.cs", Boilerplate.ExpressionHelpersTemplate.Replace("{namespace}", helpersNamespace));
+            await File.WriteAllTextAsync(@$"{_absolutePath}\\{helpersPath}\\ExpressionHelpers.cs", SharedTemplates.ExpressionHelpersTemplate.Replace("{namespace}", helpersNamespace));
 
             Console.WriteLine("STEP: Generating expression evaluator");
-            await File.WriteAllTextAsync(@$"{_absolutePath}\\{helpersPath}\\DynamicExpressionEvaluator.cs", Boilerplate.DynamicExpressionEvaluatorTemplate.Replace("{namespace}", helpersNamespace));
+            await File.WriteAllTextAsync(@$"{_absolutePath}\\{helpersPath}\\DynamicExpressionEvaluator.cs", SharedTemplates.DynamicExpressionEvaluatorTemplate.Replace("{namespace}", helpersNamespace));
 
             Console.WriteLine("STEP: Generating expression searcher");
-            await File.WriteAllTextAsync(@$"{_absolutePath}\\{helpersPath}\\DynamicExpressionSearcher.cs", Boilerplate.DynamicExpressionSearcherTemplate.Replace("{namespace}", helpersNamespace));
+            await File.WriteAllTextAsync(@$"{_absolutePath}\\{helpersPath}\\DynamicExpressionSearcher.cs", SharedTemplates.DynamicExpressionSearcherTemplate.Replace("{namespace}", helpersNamespace));
 
             Console.WriteLine("STEP: Generating enum helpers");
-            await File.WriteAllTextAsync(@$"{_absolutePath}\\{helpersPath}\\EnumHelpers.cs", Boilerplate.EnumHelpers.Replace("{namespace}", helpersNamespace));
+            await File.WriteAllTextAsync(@$"{_absolutePath}\\{helpersPath}\\EnumHelpers.cs", SharedTemplates.EnumHelpers.Replace("{namespace}", helpersNamespace));
 
             #endregion
 
@@ -225,7 +231,75 @@ namespace ASP.NET.Core_Project_Builder
             return;
         }
 
+        public static async Task GenerateEntityProject()
+        {
+            var powerShell = PowerShell.Create();
+            var entityNamespace = $"{SolutionPrefix}.Entity";
 
+            #region Generating Project
+
+            powerShell.Commands.AddScript($"dotnet new classlib --language c# -n {entityNamespace} -o {_absolutePath.Replace(" ", "` ")}\\{entityNamespace}");
+            Console.WriteLine("STEP: Generating Entity Project");
+            await InvokePowershell(powerShell);
+
+            powerShell.Commands.AddScript($"dotnet sln {_absolutePath.Replace(" ", "` ")} add {_absolutePath.Replace(" ", "` ")}\\{entityNamespace}");
+            Console.WriteLine("STEP: Adding Entity Project to Solution");
+            await InvokePowershell(powerShell);
+
+            powerShell.Commands.AddScript($"dotnet add {_absolutePath.Replace(" ", "` ")}\\{_entityNamespace} reference {_absolutePath.Replace(" ", "` ")}\\{_sharedNamespace}");
+            Console.WriteLine("STEP: Linking Shared Project to Entity Project");
+            await InvokePowershell(powerShell);
+
+            Console.WriteLine("Removing Class1.cs");
+
+            if (File.Exists($"{_absolutePath}\\{entityNamespace}\\Class1.cs"))
+                File.Delete($"{_absolutePath}\\{entityNamespace}\\Class1.cs");
+
+            #endregion
+
+            #region Install Nuget Packages
+
+            powerShell.Commands.AddScript($"dotnet add {_absolutePath.Replace(" ", "` ")}\\{entityNamespace} package Microsoft.EntityFrameworkCore");
+            Console.WriteLine("STEP: Adding Entity Framework Core");
+            await InvokePowershell(powerShell);
+
+            powerShell.Commands.AddScript($"dotnet add {_absolutePath.Replace(" ", "` ")}\\{entityNamespace} package Microsoft.EntityFrameworkCore.SqlServer");
+            Console.WriteLine("STEP: Adding Entity Framework Core Sql Server");
+            await InvokePowershell(powerShell);
+
+            powerShell.Commands.AddScript($"dotnet add {_absolutePath.Replace(" ", "` ")}\\{entityNamespace} package Microsoft.EntityFrameworkCore.Tools");
+            Console.WriteLine("STEP: Adding Entity Framework Core Tools");
+            await InvokePowershell(powerShell);
+
+            powerShell.Commands.AddScript($"dotnet add {_absolutePath.Replace(" ", "` ")}\\{entityNamespace} package Microsoft.EntityFrameworkCore.Design");
+            Console.WriteLine("STEP: Adding Entity Framework Core Design");
+            await InvokePowershell(powerShell);
+
+            powerShell.Commands.AddScript($"dotnet add {_absolutePath.Replace(" ", "` ")}\\{entityNamespace} package Microsoft.AspNetCore.Identity.EntityFrameworkCore");
+            Console.WriteLine("STEP: Adding Entity Framework Core Identity");
+            await InvokePowershell(powerShell);
+
+            powerShell.Commands.AddScript($"dotnet add {_absolutePath.Replace(" ", "` ")}\\{entityNamespace} package Microsoft.Diagnostics.EntityFrameworkCore");
+            Console.WriteLine("STEP: Adding Entity Framework Core Diagnostics");
+            await InvokePowershell(powerShell);
+
+            #endregion
+
+            Console.WriteLine("STEP: Creating models folder");
+
+            var modelsPath = @$"{entityNamespace}\Models";
+
+            if (!Directory.Exists($"{_absolutePath}\\{modelsPath}"))
+            {
+                Directory.CreateDirectory($"{_absolutePath}\\{modelsPath}");
+                Console.WriteLine($"Created entity models directory");
+            }
+
+            Console.WriteLine("STEP: Generating app db context");
+            await File.WriteAllTextAsync(@$"{_absolutePath}\\{_entityNamespace}\\AppDbContext.cs", EntityTemplates.AppDbContext.Replace("{namespace}", entityNamespace).Replace("{project}", SolutionPrefix));
+
+            return;
+        }
 
         public static async Task GenerateWebProject()
         {
