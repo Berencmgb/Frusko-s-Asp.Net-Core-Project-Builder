@@ -11,12 +11,18 @@ namespace ASP.NET.Core_Project_Builder
 {
     public static class CodeGenerator
     {
-        public static string SolutionPrefix { get; set; } = "Blink2";
+        public static string SolutionPrefix { get; set; } = "Blink";
         public static string SolutionPath { get; set; } = @"C:\Users\Beren\Documents\Projects\Test Projects";
 
         private static string _absolutePath { get => $"{SolutionPath}\\{SolutionPrefix}"; }
 
         private static string _entityNamespace { get => $"{SolutionPrefix}.Entity"; }
+        private static string _domainNamespace { get => $"{SolutionPrefix}.Domain"; }
+        private static string _serviceClientNamespace { get => $"{SolutionPrefix}.ServiceClient"; }
+        private static string _serviceNamespace { get => $"{SolutionPrefix}.Service"; }
+        private static string _repositoryNamespace { get => $"{SolutionPrefix}.Repository"; }
+        private static string _webNamespace { get => $"{SolutionPrefix}.Web"; }
+        private static string _apiNamespace { get => $"{SolutionPrefix}.Api"; }
         private static string _sharedNamespace { get => $"{SolutionPrefix}.Shared"; }
 
 
@@ -299,6 +305,164 @@ namespace ASP.NET.Core_Project_Builder
             await File.WriteAllTextAsync(@$"{_absolutePath}\\{_entityNamespace}\\AppDbContext.cs", EntityTemplates.AppDbContext.Replace("{namespace}", entityNamespace).Replace("{project}", SolutionPrefix));
 
             return;
+        }
+
+        public static async Task GenerateDomainProject()
+        {
+            var powerShell = PowerShell.Create();
+
+            #region Generating Project
+
+            powerShell.Commands.AddScript($"dotnet new classlib --language c# -n {_domainNamespace} -o {_absolutePath.Replace(" ", "` ")}\\{_domainNamespace}");
+            Console.WriteLine("STEP: Generating Domain Project");
+            await InvokePowershell(powerShell);
+
+            powerShell.Commands.AddScript($"dotnet sln {_absolutePath.Replace(" ", "` ")} add {_absolutePath.Replace(" ", "` ")}\\{_domainNamespace}");
+            Console.WriteLine("STEP: Adding Entity Project to Solution");
+            await InvokePowershell(powerShell);
+
+            powerShell.Commands.AddScript($"dotnet add {_absolutePath.Replace(" ", "` ")}\\{_domainNamespace} reference {_absolutePath.Replace(" ", "` ")}\\{_sharedNamespace}");
+            Console.WriteLine("STEP: Linking Shared Project to Entity Project");
+            await InvokePowershell(powerShell);
+
+            Console.WriteLine("Removing Class1.cs");
+
+            if (File.Exists($"{_absolutePath}\\{_domainNamespace}\\Class1.cs"))
+                File.Delete($"{_absolutePath}\\{_domainNamespace}\\Class1.cs");
+
+            #endregion
+
+            Console.WriteLine("STEP: Creating models folder");
+
+            var modelsPath = @$"{_domainNamespace}\Models";
+
+            if (!Directory.Exists($"{_absolutePath}\\{modelsPath}"))
+            {
+                Directory.CreateDirectory($"{_absolutePath}\\{modelsPath}");
+                Console.WriteLine($"Created domain models directory");
+            }
+
+            return;
+        }
+
+        public static async Task GenerateServiceClientProject()
+        {
+            var powerShell = PowerShell.Create();
+
+            #region Generating Project
+
+            powerShell.Commands.AddScript($"dotnet new classlib --language c# -n {_serviceClientNamespace} -o {_absolutePath.Replace(" ", "` ")}\\{_serviceClientNamespace}");
+            Console.WriteLine("STEP: Generating Entity Project");
+            await InvokePowershell(powerShell);
+
+            powerShell.Commands.AddScript($"dotnet sln {_absolutePath.Replace(" ", "` ")} add {_absolutePath.Replace(" ", "` ")}\\{_serviceClientNamespace}");
+            Console.WriteLine("STEP: Adding Entity Project to Solution");
+            await InvokePowershell(powerShell);
+
+            powerShell.Commands.AddScript($"dotnet add {_absolutePath.Replace(" ", "` ")}\\{_serviceClientNamespace} reference {_absolutePath.Replace(" ", "` ")}\\{_sharedNamespace}");
+            Console.WriteLine("STEP: Linking Shared Project to Entity Project");
+            await InvokePowershell(powerShell);
+
+            powerShell.Commands.AddScript($"dotnet add {_absolutePath.Replace(" ", "` ")}\\{_serviceClientNamespace} reference {_absolutePath.Replace(" ", "` ")}\\{_domainNamespace}");
+            Console.WriteLine("STEP: Linking Shared Project to Entity Project");
+            await InvokePowershell(powerShell);
+
+            Console.WriteLine("Removing Class1.cs");
+
+            if (File.Exists($"{_absolutePath}\\{_serviceClientNamespace}\\Class1.cs"))
+                File.Delete($"{_absolutePath}\\{_serviceClientNamespace}\\Class1.cs");
+
+            #endregion
+
+            #region Install Nuget Packages
+
+            powerShell.Commands.AddScript($"dotnet add {_absolutePath.Replace(" ", "` ")}\\{_serviceClientNamespace} package Microsoft.AspNetCore.Authentication.JwtBearer");
+            Console.WriteLine("STEP: Adding Microsoft AspNetCore Authentication JwtBearer");
+            await InvokePowershell(powerShell);
+
+            powerShell.Commands.AddScript($"dotnet add {_absolutePath.Replace(" ", "` ")}\\{_serviceClientNamespace} package Newtonsoft.Json");
+            Console.WriteLine("STEP: Adding Newtonsoft Json");
+            await InvokePowershell(powerShell);
+
+            #endregion
+
+            return;
+        }
+
+        public static async Task GenerateRepositoryProject()
+        {
+            var powerShell = PowerShell.Create();
+
+            #region Generating Project
+
+            powerShell.Commands.AddScript($"dotnet new classlib --language c# -n {_repositoryNamespace} -o {_absolutePath.Replace(" ", "` ")}\\{_repositoryNamespace}");
+            Console.WriteLine("STEP: Generating Entity Project");
+            await InvokePowershell(powerShell);
+
+            powerShell.Commands.AddScript($"dotnet sln {_absolutePath.Replace(" ", "` ")} add {_absolutePath.Replace(" ", "` ")}\\{_repositoryNamespace}");
+            Console.WriteLine("STEP: Adding Entity Project to Solution");
+            await InvokePowershell(powerShell);
+
+            powerShell.Commands.AddScript($"dotnet add {_absolutePath.Replace(" ", "` ")}\\{_repositoryNamespace} reference {_absolutePath.Replace(" ", "` ")}\\{_sharedNamespace}");
+            Console.WriteLine("STEP: Linking Shared Project to Entity Project");
+            await InvokePowershell(powerShell);
+
+            powerShell.Commands.AddScript($"dotnet add {_absolutePath.Replace(" ", "` ")}\\{_repositoryNamespace} reference {_absolutePath.Replace(" ", "` ")}\\{_entityNamespace}");
+            Console.WriteLine("STEP: Linking Shared Project to Entity Project");
+            await InvokePowershell(powerShell);
+
+            Console.WriteLine("Removing Class1.cs");
+
+            if (File.Exists($"{_absolutePath}\\{_repositoryNamespace}\\Class1.cs"))
+                File.Delete($"{_absolutePath}\\{_repositoryNamespace}\\Class1.cs");
+
+            #endregion
+
+            #region Install Nuget Packages
+
+            powerShell.Commands.AddScript($"dotnet add {_absolutePath.Replace(" ", "` ")}\\{_repositoryNamespace} package Automapper");
+            Console.WriteLine("STEP: Adding Automapper");
+            await InvokePowershell(powerShell);
+
+            powerShell.Commands.AddScript($"dotnet add {_absolutePath.Replace(" ", "` ")}\\{_repositoryNamespace} package Microsoft.EntityFrameworkCore.DynamicLinq");
+            Console.WriteLine("STEP: Adding Microsoft EntityFrameworkCore DynamicLinq");
+            await InvokePowershell(powerShell);
+
+            #endregion
+        }
+
+        public static async Task GenerateServiceProject()
+        {
+            var powerShell = PowerShell.Create();
+
+            #region Generating Project
+
+            powerShell.Commands.AddScript($"dotnet new classlib --language c# -n {_serviceNamespace} -o {_absolutePath.Replace(" ", "` ")}\\{_serviceNamespace}");
+            Console.WriteLine("STEP: Generating Entity Project");
+            await InvokePowershell(powerShell);
+
+            powerShell.Commands.AddScript($"dotnet sln {_absolutePath.Replace(" ", "` ")} add {_absolutePath.Replace(" ", "` ")}\\{_serviceNamespace}");
+            Console.WriteLine("STEP: Adding Entity Project to Solution");
+            await InvokePowershell(powerShell);
+
+            powerShell.Commands.AddScript($"dotnet add {_absolutePath.Replace(" ", "` ")}\\{_serviceNamespace} reference {_absolutePath.Replace(" ", "` ")}\\{_sharedNamespace}");
+            Console.WriteLine("STEP: Linking Shared Project to Entity Project");
+            await InvokePowershell(powerShell);
+
+            powerShell.Commands.AddScript($"dotnet add {_absolutePath.Replace(" ", "` ")}\\{_serviceNamespace} reference {_absolutePath.Replace(" ", "` ")}\\{_entityNamespace}");
+            Console.WriteLine("STEP: Linking Shared Project to Entity Project");
+            await InvokePowershell(powerShell);
+
+            powerShell.Commands.AddScript($"dotnet add {_absolutePath.Replace(" ", "` ")}\\{_serviceNamespace} reference {_absolutePath.Replace(" ", "` ")}\\{_repositoryNamespace}");
+            Console.WriteLine("STEP: Linking Shared Project to Entity Project");
+            await InvokePowershell(powerShell);
+
+            Console.WriteLine("Removing Class1.cs");
+
+            if (File.Exists($"{_absolutePath}\\{_serviceNamespace}\\Class1.cs"))
+                File.Delete($"{_absolutePath}\\{_serviceNamespace}\\Class1.cs");
+
+            #endregion
         }
 
         public static async Task GenerateWebProject()

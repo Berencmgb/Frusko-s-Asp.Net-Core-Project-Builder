@@ -43,3 +43,9 @@ while (!inputs)
 await CodeGenerator.GenerateRootFolder();
 await CodeGenerator.GenerateSharedProject();
 await CodeGenerator.GenerateEntityProject();
+await CodeGenerator.GenerateDomainProject();
+await CodeGenerator.GenerateServiceClientProject();
+await CodeGenerator.GenerateRepositoryProject();
+await CodeGenerator.GenerateServiceProject();
+await CodeGenerator.GenerateWebProject();
+await CodeGenerator.GenerateAPI();
