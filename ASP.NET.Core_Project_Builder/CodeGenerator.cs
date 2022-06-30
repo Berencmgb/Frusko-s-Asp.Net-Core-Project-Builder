@@ -53,14 +53,16 @@ namespace ASP.NET.Core_Project_Builder
         public static async Task GenerateSharedProject()
         {
             var powerShell = PowerShell.Create();
-            var sharedNamespace = $"{SolutionPrefix}.Shared";            
+            var sharedNamespace = $"{SolutionPrefix}.Shared";
+
+            #region Installing Nuget Packages
 
             powerShell.Commands.AddScript($"dotnet new classlib --language c# -n {sharedNamespace} -o {_absolutePath.Replace(" ", "` ")}\\{sharedNamespace}");
             Console.WriteLine("STEP: Generating Shared Project");
             await InvokePowershell(powerShell);
 
 
-            powerShell.Commands.AddScript($"dotnet add {_absolutePath.Replace(" ", "` ")}\\{sharedNamespace} package AutoMapper");            
+            powerShell.Commands.AddScript($"dotnet add {_absolutePath.Replace(" ", "` ")}\\{sharedNamespace} package AutoMapper");
             Console.WriteLine("STEP: Adding Automapper");
             await InvokePowershell(powerShell);
 
@@ -111,6 +113,10 @@ namespace ASP.NET.Core_Project_Builder
             Console.WriteLine("STEP: Restoring Nuget Packages");
             await InvokePowershell(powerShell);
 
+            #endregion
+
+            #region Generating Models
+
             Console.WriteLine("STEP: Creating models folder");
 
             var modelsPath = @$"{sharedNamespace}\Models";
@@ -121,8 +127,6 @@ namespace ASP.NET.Core_Project_Builder
                 Console.WriteLine($"Created shared models directory");
             }
             var modelNamespace = modelsPath.Replace(@"\", ".");
-
-            #region Generating Models
 
             Console.WriteLine("STEP: Generating base entity");
             await File.WriteAllTextAsync(@$"{_absolutePath}\\{modelsPath}\\BaseEntity.cs", Boilerplate.BaseEntityTemplate.Replace("{namespace}", modelNamespace));
@@ -141,7 +145,7 @@ namespace ASP.NET.Core_Project_Builder
 
             #endregion
 
-            #region Generating utilities
+            #region Generating Utilities
 
             var utiltiesPath = @$"{sharedNamespace}\Utilities";
 
@@ -152,6 +156,8 @@ namespace ASP.NET.Core_Project_Builder
             }
 
             var utilitiesNamespace = utiltiesPath.Replace(@"\", ".");
+
+            var securityKey = Guid.NewGuid().ToString();
 
             Console.WriteLine("STEP: Generating shared db context");
             await File.WriteAllTextAsync(@$"{_absolutePath}\\{utiltiesPath}\\SharedDBContext.cs", Boilerplate.SharedDBContext.Replace("{namespace}", utilitiesNamespace).Replace("{project}", SolutionPrefix));
@@ -172,7 +178,10 @@ namespace ASP.NET.Core_Project_Builder
             await File.WriteAllTextAsync(@$"{_absolutePath}\\{utiltiesPath}\\PostBody.cs", Boilerplate.PostBodyTemplate.Replace("{namespace}", utilitiesNamespace).Replace("{project}", SolutionPrefix));
 
             Console.WriteLine("STEP: Generating web constants");
-            await File.WriteAllTextAsync(@$"{_absolutePath}\\{utiltiesPath}\\PostBody.cs", Boilerplate.WebConstantsTemplate.Replace("{namespace}", utilitiesNamespace).Replace("{project}", SolutionPrefix).Replace("{new_id}", Guid.NewGuid().ToString()));
+            await File.WriteAllTextAsync(@$"{_absolutePath}\\{utiltiesPath}\\{SolutionPrefix}WebConstants.cs", Boilerplate.WebConstantsTemplate.Replace("{namespace}", utilitiesNamespace).Replace("{project}", SolutionPrefix).Replace("{new_id}", securityKey));
+
+            Console.WriteLine("STEP: Generating api constants");
+            await File.WriteAllTextAsync(@$"{_absolutePath}\\{utiltiesPath}\\{SolutionPrefix}ApiConstants.cs", Boilerplate.ApiConstantsTemplate.Replace("{namespace}", utilitiesNamespace).Replace("{project}", SolutionPrefix).Replace("{new_id}", securityKey));
 
             #endregion
 

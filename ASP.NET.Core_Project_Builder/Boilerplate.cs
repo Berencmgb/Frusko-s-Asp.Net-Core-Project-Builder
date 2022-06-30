@@ -1162,8 +1162,27 @@ namespace {namespace}
         public static string LocalHostUrl { get => """"; }
         public static string HostUrl { get; set; } = LocalHostUrl;
         public static string LiveUrl { get; set; }
+        public static string {project}WebIssuer { get => ""{project}-Web""; }
     }
-}
+}";
+
+        public const string ApiConstantsTemplate =
+@"using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
+
+namespace {namespace}
+{
+    public static class {project}ApiConstants
+    {
+        public static string Scope { get => ""{project}-Api""; }
+        public static string SecurityKey { get; } = ""{new_id}"";
+        public static SymmetricSecurityKey SymmetricSecurityKey { get; } = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(SecurityKey));
+        public static string TestHostUrl { get; set; } = """";
+        public static string HostUrl { get; set; } = TestHostUrl;
+        public static string LiveUrl { get; set; } = """";
+        public static string {project}ApiAudience { get => ""{project}-Api""; }
+    }
 }";
 
         public const string DynamicExpressionEvaluatorTemplate =
