@@ -47,7 +47,6 @@ namespace ASP.NET.Core_Project_Builder
             {
                 Console.WriteLine(command.ToString());
             }
-
         }
 
         public static async Task GenerateSharedProject()
@@ -55,12 +54,20 @@ namespace ASP.NET.Core_Project_Builder
             var powerShell = PowerShell.Create();
             var sharedNamespace = $"{SolutionPrefix}.Shared";
 
-            #region Installing Nuget Packages
+            #region Generating Project
 
             powerShell.Commands.AddScript($"dotnet new classlib --language c# -n {sharedNamespace} -o {_absolutePath.Replace(" ", "` ")}\\{sharedNamespace}");
             Console.WriteLine("STEP: Generating Shared Project");
             await InvokePowershell(powerShell);
 
+            Console.WriteLine("Removing Class1.cs");
+
+            if (File.Exists($"{_absolutePath}\\{sharedNamespace}\\Class1.cs"))
+                File.Delete($"{_absolutePath}\\{sharedNamespace}\\Class1.cs");
+
+            #endregion
+
+            #region Installing Nuget Packages
 
             powerShell.Commands.AddScript($"dotnet add {_absolutePath.Replace(" ", "` ")}\\{sharedNamespace} package AutoMapper");
             Console.WriteLine("STEP: Adding Automapper");
@@ -200,7 +207,7 @@ namespace ASP.NET.Core_Project_Builder
             Console.WriteLine("STEP: Generating string helpers");
             await File.WriteAllTextAsync(@$"{_absolutePath}\\{helpersPath}\\StringHelpers.cs", Boilerplate.StringHelpersTemplate.Replace("{namespace}", helpersNamespace));
 
-            Console.WriteLine("STEP: Generating string helpers");
+            Console.WriteLine("STEP: Generating expression helpers");
             await File.WriteAllTextAsync(@$"{_absolutePath}\\{helpersPath}\\ExpressionHelpers.cs", Boilerplate.ExpressionHelpersTemplate.Replace("{namespace}", helpersNamespace));
 
             Console.WriteLine("STEP: Generating expression evaluator");
@@ -208,6 +215,9 @@ namespace ASP.NET.Core_Project_Builder
 
             Console.WriteLine("STEP: Generating expression searcher");
             await File.WriteAllTextAsync(@$"{_absolutePath}\\{helpersPath}\\DynamicExpressionSearcher.cs", Boilerplate.DynamicExpressionSearcherTemplate.Replace("{namespace}", helpersNamespace));
+
+            Console.WriteLine("STEP: Generating enum helpers");
+            await File.WriteAllTextAsync(@$"{_absolutePath}\\{helpersPath}\\EnumHelpers.cs", Boilerplate.EnumHelpers.Replace("{namespace}", helpersNamespace));
 
             #endregion
 
