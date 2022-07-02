@@ -11,7 +11,7 @@ namespace ASP.NET.Core_Project_Builder
 {
     public static class CodeGenerator
     {
-        public static string SolutionPrefix { get; set; } = "Blink1";
+        public static string SolutionPrefix { get; set; } = "BlinkCSSTest";
         public static string SolutionPath { get; set; } = @"C:\Users\Beren\Documents\Projects\Test Projects";
 
         private static string _absolutePath { get => $"{SolutionPath}\\{SolutionPrefix}"; }
@@ -532,6 +532,17 @@ namespace ASP.NET.Core_Project_Builder
             #endregion
 
             File.WriteAllText($"{_absolutePath}\\{_webNamespace}\\Program.cs", WebTemplates.ProgramTemplate.Replace("{project}", SolutionPrefix));
+            File.WriteAllText($"{_absolutePath}\\{_webNamespace}\\Gulpfile.js", WebTemplates.GulpTemplate.Replace("{project}", SolutionPrefix));
+
+            if (!Directory.Exists($"{_absolutePath}\\{_webNamespace}\\Scripts"))
+                Directory.CreateDirectory($"{_absolutePath}\\{_webNamespace}\\Scripts");
+
+            if (!Directory.Exists($"{_absolutePath}\\{_webNamespace}\\Styles"))
+                Directory.CreateDirectory($"{_absolutePath}\\{_webNamespace}\\Styles");
+
+            File.WriteAllText($"{_absolutePath}\\{_webNamespace}\\Scripts\\{SolutionPrefix}.js", WebTemplates.JqueryTemplate.Replace("{project}", SolutionPrefix).Replace("{project_lower}", SolutionPrefix.ToLower()));
+            File.WriteAllText($"{_absolutePath}\\{_webNamespace}\\Styles\\Main.scss", WebTemplates.SiteCssTemplate);
+            File.WriteAllText($"{_absolutePath}\\{_webNamespace}\\Views\\Shared\\_Layout.cshtml", WebTemplates.LayoutTemplate.Replace("{project}", SolutionPrefix).Replace("{project_lower}", SolutionPrefix.ToLower()));
 
             return;
         }
