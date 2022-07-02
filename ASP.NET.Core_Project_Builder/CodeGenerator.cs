@@ -11,7 +11,7 @@ namespace ASP.NET.Core_Project_Builder
 {
     public static class CodeGenerator
     {
-        public static string SolutionPrefix { get; set; } = "Blink";
+        public static string SolutionPrefix { get; set; } = "Blink1";
         public static string SolutionPath { get; set; } = @"C:\Users\Beren\Documents\Projects\Test Projects";
 
         private static string _absolutePath { get => $"{SolutionPath}\\{SolutionPrefix}"; }
@@ -467,6 +467,72 @@ namespace ASP.NET.Core_Project_Builder
 
         public static async Task GenerateWebProject()
         {
+            var powerShell = PowerShell.Create();
+
+            #region Generating Project
+
+            powerShell.Commands.AddScript($"dotnet new mvc --language c# -n {_webNamespace} -o {_absolutePath.Replace(" ", "` ")}\\{_webNamespace}");
+            Console.WriteLine("STEP: Generating Web Project");
+            await InvokePowershell(powerShell);
+
+            powerShell.Commands.AddScript($"dotnet sln {_absolutePath.Replace(" ", "` ")} add {_absolutePath.Replace(" ", "` ")}\\{_webNamespace}");
+            Console.WriteLine("STEP: Adding Web Project to Solution");
+            await InvokePowershell(powerShell);
+
+            powerShell.Commands.AddScript($"dotnet add {_absolutePath.Replace(" ", "` ")}\\{_webNamespace} reference {_absolutePath.Replace(" ", "` ")}\\{_sharedNamespace}");
+            Console.WriteLine("STEP: Linking Shared Project to Web Project");
+            await InvokePowershell(powerShell);
+
+            powerShell.Commands.AddScript($"dotnet add {_absolutePath.Replace(" ", "` ")}\\{_webNamespace} reference {_absolutePath.Replace(" ", "` ")}\\{_domainNamespace}");
+            Console.WriteLine("STEP: Linking Domain Project to Web Project");
+            await InvokePowershell(powerShell);
+
+            powerShell.Commands.AddScript($"dotnet add {_absolutePath.Replace(" ", "` ")}\\{_webNamespace} reference {_absolutePath.Replace(" ", "` ")}\\{_serviceClientNamespace}");
+            Console.WriteLine("STEP: Linking Service Client Project to Web Project");
+            await InvokePowershell(powerShell);
+
+            #endregion
+
+            #region Install Nuget Packages
+
+            powerShell.Commands.AddScript($"dotnet add {_absolutePath.Replace(" ", "` ")}\\{_webNamespace} package Automapper");
+            Console.WriteLine("STEP: Adding Automapper");
+            await InvokePowershell(powerShell);
+
+            powerShell.Commands.AddScript($"dotnet add {_absolutePath.Replace(" ", "` ")}\\{_webNamespace} package AutoMapper.Extensions.Microsoft.DependencyInjection");
+            Console.WriteLine("STEP: Adding Automapper Extensions Microsoft DependancyInjection");
+            await InvokePowershell(powerShell);
+
+            powerShell.Commands.AddScript($"dotnet add {_absolutePath.Replace(" ", "` ")}\\{_webNamespace} package Newtonsoft.Json");
+            Console.WriteLine("STEP: Adding Newtonsoft Json");
+            await InvokePowershell(powerShell);
+
+            powerShell.Commands.AddScript($"dotnet add {_absolutePath.Replace(" ", "` ")}\\{_webNamespace} package Microsoft.AspNetCore.Mvc.NewtonsoftJson");
+            Console.WriteLine("STEP: Adding Microsoft AspNetCore Mvc NewtonsoftJson");
+            await InvokePowershell(powerShell);
+
+            #endregion
+
+            #region Install Node Packages
+
+            powerShell.Commands.AddScript($"cd {_absolutePath.Replace(" ", "` ")}\\{_webNamespace}");
+            powerShell.Commands.AddScript($"npm init -y");
+            powerShell.Commands.AddScript($"npm install jquery --save-dev");
+            powerShell.Commands.AddScript($"npm install jquery-validation --save-dev");
+            powerShell.Commands.AddScript($"npm install jquery-validation-unobtrusive --save-dev");
+            powerShell.Commands.AddScript($"npm install gulp --save-dev");
+            powerShell.Commands.AddScript($"npm install gulp-sass --save-dev");
+            powerShell.Commands.AddScript($"npm install gulp-concat --save-dev");
+            powerShell.Commands.AddScript($"npm install sass --save-dev");
+            powerShell.Commands.AddScript($"npm install bootstrap");
+            powerShell.Commands.AddScript($"npm install bootstrap-icons");
+            Console.WriteLine("STEP: Adding Node Packages");
+            await InvokePowershell(powerShell);
+
+            #endregion
+
+            File.WriteAllText($"{_absolutePath}\\{_webNamespace}\\Program.cs", WebTemplates.ProgramTemplate.Replace("{project}", SolutionPrefix));
+
             return;
         }
 
