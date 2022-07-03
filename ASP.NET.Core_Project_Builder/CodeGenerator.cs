@@ -11,7 +11,7 @@ namespace ASP.NET.Core_Project_Builder
 {
     public static class CodeGenerator
     {
-        public static string SolutionPrefix { get; set; } = "BlinkCSSTest";
+        public static string SolutionPrefix { get; set; } = "Blink2";
         public static string SolutionPath { get; set; } = @"C:\Users\Beren\Documents\Projects\Test Projects";
 
         private static string _absolutePath { get => $"{SolutionPath}\\{SolutionPrefix}"; }
@@ -511,6 +511,14 @@ namespace ASP.NET.Core_Project_Builder
             Console.WriteLine("STEP: Adding Microsoft AspNetCore Mvc NewtonsoftJson");
             await InvokePowershell(powerShell);
 
+            powerShell.Commands.AddScript($"dotnet add {_absolutePath.Replace(" ", "` ")}\\{_webNamespace} package Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation");
+            Console.WriteLine("STEP: Adding Microsoft AspNetCore Razor RuntimeCompilation");
+            await InvokePowershell(powerShell);
+
+            powerShell.Commands.AddScript($"dotnet add {_absolutePath.Replace(" ", "` ")}\\{_webNamespace} package Microsoft.EntityFrameworkCore.Design");
+            Console.WriteLine("STEP: Adding Microsoft EntityFrameworkCore Design");
+            await InvokePowershell(powerShell);
+
             #endregion
 
             #region Install Node Packages
@@ -549,6 +557,80 @@ namespace ASP.NET.Core_Project_Builder
 
         public static async Task GenerateAPI()
         {
+            var powerShell = PowerShell.Create();
+
+            #region Generating Project
+
+            powerShell.Commands.AddScript($"dotnet new 	webapi --language c# -n {_apiNamespace} -o {_absolutePath.Replace(" ", "` ")}\\{_apiNamespace}");
+            Console.WriteLine("STEP: Generating Api Project");
+            await InvokePowershell(powerShell);
+
+            powerShell.Commands.AddScript($"dotnet sln {_absolutePath.Replace(" ", "` ")} add {_absolutePath.Replace(" ", "` ")}\\{_apiNamespace}");
+            Console.WriteLine("STEP: Adding Api Project to Solution");
+            await InvokePowershell(powerShell);
+
+            powerShell.Commands.AddScript($"dotnet add {_absolutePath.Replace(" ", "` ")}\\{_apiNamespace} reference {_absolutePath.Replace(" ", "` ")}\\{_sharedNamespace}");
+            Console.WriteLine("STEP: Linking Shared Project to Api Project");
+            await InvokePowershell(powerShell);
+
+            powerShell.Commands.AddScript($"dotnet add {_absolutePath.Replace(" ", "` ")}\\{_apiNamespace} reference {_absolutePath.Replace(" ", "` ")}\\{_domainNamespace}");
+            Console.WriteLine("STEP: Linking Domain Project to Api Project");
+            await InvokePowershell(powerShell);
+
+            powerShell.Commands.AddScript($"dotnet add {_absolutePath.Replace(" ", "` ")}\\{_apiNamespace} reference {_absolutePath.Replace(" ", "` ")}\\{_serviceNamespace}");
+            Console.WriteLine("STEP: Linking Service Project to Api Project");
+            await InvokePowershell(powerShell);
+
+            powerShell.Commands.AddScript($"dotnet add {_absolutePath.Replace(" ", "` ")}\\{_apiNamespace} reference {_absolutePath.Replace(" ", "` ")}\\{_repositoryNamespace}");
+            Console.WriteLine("STEP: Linking Repository Project to Api Project");
+            await InvokePowershell(powerShell);
+
+            powerShell.Commands.AddScript($"dotnet add {_absolutePath.Replace(" ", "` ")}\\{_apiNamespace} reference {_absolutePath.Replace(" ", "` ")}\\{_entityNamespace}");
+            Console.WriteLine("STEP: Linking Entity Project to Api Project");
+            await InvokePowershell(powerShell);
+
+            #endregion
+
+            #region Install Nuget Packages
+
+            powerShell.Commands.AddScript($"dotnet add {_absolutePath.Replace(" ", "` ")}\\{_apiNamespace} package Automapper");
+            Console.WriteLine("STEP: Adding Automapper");
+            await InvokePowershell(powerShell);
+
+            powerShell.Commands.AddScript($"dotnet add {_absolutePath.Replace(" ", "` ")}\\{_apiNamespace} package AutoMapper.Extensions.Microsoft.DependencyInjection");
+            Console.WriteLine("STEP: Adding Automapper Extensions Microsoft DependancyInjection");
+            await InvokePowershell(powerShell);
+
+            powerShell.Commands.AddScript($"dotnet add {_absolutePath.Replace(" ", "` ")}\\{_apiNamespace} package Microsoft.AspNetCore.Authentication.JwtBearer");
+            Console.WriteLine("STEP: Adding Microsoft AspNetCore Authentication JwtBearer");
+            await InvokePowershell(powerShell);
+
+            powerShell.Commands.AddScript($"dotnet add {_absolutePath.Replace(" ", "` ")}\\{_apiNamespace} package Microsoft.AspNetCore.Mvc.NewtonsoftJson");
+            Console.WriteLine("STEP: Adding Microsoft AspNetCore Mvc NewtonsoftJson");
+            await InvokePowershell(powerShell);
+
+            powerShell.Commands.AddScript($"dotnet add {_absolutePath.Replace(" ", "` ")}\\{_apiNamespace} package Newtonsoft.Json");
+            Console.WriteLine("STEP: Adding Newtonsoft Json");
+            await InvokePowershell(powerShell);
+
+            powerShell.Commands.AddScript($"dotnet add {_absolutePath.Replace(" ", "` ")}\\{_apiNamespace} package Microsoft.EntityFrameworkCore");
+            Console.WriteLine("STEP: Adding Microsoft EntityFrameworkCore");
+            await InvokePowershell(powerShell);
+
+            powerShell.Commands.AddScript($"dotnet add {_absolutePath.Replace(" ", "` ")}\\{_apiNamespace} package Microsoft.EntityFrameworkCore.SqlServer");
+            Console.WriteLine("STEP: Adding Microsoft EntityFrameworkCore SqlServer");
+            await InvokePowershell(powerShell);
+
+            powerShell.Commands.AddScript($"dotnet add {_absolutePath.Replace(" ", "` ")}\\{_apiNamespace} package Microsoft.EntityFrameworkCore.Design");
+            Console.WriteLine("STEP: Adding Microsoft EntityFrameworkCore Design");
+            await InvokePowershell(powerShell);
+
+
+            #endregion
+
+            File.WriteAllText($"{_absolutePath}\\{_apiNamespace}\\Program.cs", ApiTemplates.ProgramTemplate.Replace("{project}", SolutionPrefix));
+            File.WriteAllText($"{_absolutePath}\\{_apiNamespace}\\AppSettings.json", ApiTemplates.AppSettingsTemplate.Replace("{project}", SolutionPrefix));
+
             return;
         }
 
