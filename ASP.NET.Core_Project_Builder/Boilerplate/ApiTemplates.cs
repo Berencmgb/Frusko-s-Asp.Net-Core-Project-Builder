@@ -65,6 +65,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddDbContext<AppDbContext>(c => c.UseSqlServer(builder.Configuration.GetConnectionString(""DefaultConnection""), o => o.EnableRetryOnFailure()));
 
+builder.Services.AddScoped(typeof(IIdentityResolver), typeof(IdentityResolver));
+builder.Services.AddScoped(typeof(ITokenResolver), typeof(TokenResolver));
+
 // Add Repositories
 
 

@@ -28,6 +28,8 @@ builder.Services.AddControllers().AddNewtonsoftJson(o =>
 });
 
 // Service Client List
+builder.Services.AddScoped(typeof(IIdentityResolver), typeof(IdentityResolver));
+builder.Services.AddScoped(typeof(ITokenResolver), typeof(TokenResolver));
 builder.Services.AddScoped(typeof(IBaseServiceClient<>), typeof(BaseServiceClient<>));
 
 
@@ -131,6 +133,124 @@ exports.buildCss = buildCss;
 exports.buildBundleJs = buildBundleJs;
 exports.buildBundleCss = buildBundleCss;
 ";
+
+        public const string BaseControllerTemplate =
+@"using AutoMapper;
+using {project}.Domain.Models;
+using {project}.Shared;
+using {project}.Shared.Utilities;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Threading.Tasks;
+using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+
+namespace {namespace}.Controllers;
+
+public class BaseController : Controller
+{
+    protected readonly IMapper _mapper;
+    protected readonly ITokenResolver _tokenResolver;
+
+    public BaseController(IMapper mapper, ITokenResolver tokenResolver)
+    {
+        _mapper = mapper;
+        _tokenResolver = tokenResolver;
+    }
+
+    protected async Task<HttpPayload> GetPayload()
+    {
+        return new HttpPayload
+        {
+            SecurityToken = new JwtSecurityTokenHandler().WriteToken(await _tokenResolver.GetToken()),
+            Uri = {project}ApiConstants.HostUrl
+        };
+    }
+}
+";
+
+        public const string CreateUserViewModelTemplate =
+@"using System.ComponentModel.DataAnnotations;
+
+namespace {project}.ViewModels.Account;
+
+public class CreateUserViewModel
+{
+    [Required]
+    [EmailAddress]
+    [Display(Name = ""Email"")]
+    public string Email { get; set; }
+
+    [Required]
+    public string FirstName { get; set; }
+
+    [Required]
+    public string LastName { get; set; }
+
+    [Required]
+    public string Username { get; set; }
+
+    [Required]
+    [DataType(DataType.Password)]
+    public string Password { get; set; }
+
+    [Required]
+    [Compare(""Password"", ErrorMessage = ""The password and confirmation password do not match."")]
+    public string ConfirmPassword { get; set; }
+}
+";
+
+        public const string AccountControllerTemplate =
+@"using AutoMapper;
+using {project}.Domain.Models;
+using {project}.ServiceClients;
+using {project}.Shared;
+using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+
+namespace {namespace}.Controllers;
+
+public class AccountController : BaseController
+{
+    private readonly IAccountServiceClient _accountServiceClient;
+    private readonly IIdentityResolver _identityResolver;
+
+    public AccountController(IMapper mapper,
+        ITokenResolver tokenResolver,
+        IAccountServiceClient accountServiceClient,
+        IIdentityResolver identityResolver)
+        : base(mapper,
+            tokenResolver)
+    {
+        _accountServiceClient = accountServiceClient;
+        _identityResolver = identityResolver;
+    }
+
+    [HttpGet(""Register"")]
+    public async Task<IActionResult> Register()
+    {
+        var viewModel = new CreateUserViewModel {  };
+        return View(viewModel);
+    }
+
+    [HttpPost(""Register"")]
+    public async Task<IActionResult> Register(CreateUserViewModel viewModel)
+    {
+        var payload = await GetPayload();
+
+        var userDTO = _mapper.Map<UserDTO>(viewModel);
+
+        var result = await _accountServiceClient.RegisterAsync(payload, userDTO);
+    }
+    
+}
+";
+
 
         public const string JqueryTemplate =
 @"var {project_lower} = function (){

@@ -1276,6 +1276,116 @@ namespace {namespace}
     }
 }";
 
+        public const string TokenResolverTemplate =
+@"using {project}.Shared.Models;
+using Microsoft.AspNetCore.Http;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+
+namespace {namespace};
+
+public class TokenResolver : ITokenResolver
+{
+    private readonly IHttpContextAccessor _httpContextAccessor;
+    public TokenResolver(IHttpContextAccessor httpContextAccessor)
+    {
+        _httpContextAccessor = httpContextAccessor;
+    }
+
+    public async Task<string> GetTokenAsync(string audience = null)
+    {
+        var signingCredentials = new SigningCredentials({project}ApiConstants.SymmetricSecurityKey, SecurityAlgorithms.HmacSha256Signature);
+
+        var token = new JwtSecurityToken(
+            issuer: {project}WebConstants.{project}WebIssuer,
+            audience: !string.IsNullOrWhiteSpace(audience) ? audience : {project}ApiConstants.{project}ApiAudience,
+            signingCredentials: signingCredentials,
+            claims: _httpContextAccessor.HttpContext?.User.Claims.ToList()
+        );
+
+        return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    public async Task<string> GetTokenAsync(string audience = null, ClaimsPrincipal claims = null)
+    {
+        var signingCredentials = new SigningCredentials({project}ApiConstants.SymmetricSecurityKey, SecurityAlgorithms.HmacSha256Signature);
+
+        var token = new JwtSecurityToken(
+            issuer: {project}WebConstants.{project}WebIssuer,
+            audience: !string.IsNullOrWhiteSpace(audience) ? audience : {project}ApiConstants.{project}ApiAudience,
+            signingCredentials: signingCredentials,
+            claims: claims.Claims != null ? claims.Claims : _httpContextAccessor.HttpContext?.User.Claims.ToList()
+        );
+        
+
+        return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+}
+
+public interface ITokenResolver
+{
+    public Task<string> GetTokenAsync(string audience = null);
+    public Task<string> GetTokenAsync(string audience = null, ClaimsPrincipal claims = null);
+}
+
+";
+
+        public const string CurrentUserTemplate =
+@"namespace {namespace};
+
+public class CurrentUser
+{
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
+    public string Email { get; set; }
+    public string Username { get; set; }
+    public string Reference { get; set; }
+    public bool IsSignedIn { get; set; }
+}";
+
+        public const string IdentityResolverTemplate =
+@"using {project}.Shared.Models;
+using Microsoft.AspNetCore.Http;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace {namespace};
+
+public class IdentityResolver : IIdentityResolver
+{
+    private readonly IHttpContextAccessor _httpContextAccessor;
+
+    public IdentityResolver(IHttpContextAccessor httpContextAccessor)
+    {
+        _httpContextAccessor = httpContextAccessor;
+    }
+
+    public async Task<CurrentUser> GetCurrentAccountAsync()
+    {
+        var currentUser = new CurrentUser();
+
+        var firstName = _httpContextAccessor.HttpContext.User?.Claims?.FirstOrDefault(c => c.Type == ""FirstName"")?.Value;
+        var lastName = _httpContextAccessor.HttpContext.User?.Claims?.FirstOrDefault(c => c.Type == ""LastName"")?.Value;
+        var username = _httpContextAccessor.HttpContext.User?.Claims?.FirstOrDefault(c => c.Type == ""UserName"")?.Value;
+        var email = _httpContextAccessor.HttpContext.User?.Claims?.FirstOrDefault(c => c.Type == ""Email"")?.Value;
+        var reference = _httpContextAccessor.HttpContext.User?.Claims?.FirstOrDefault(c => c.Type == ""Reference"")?.Value;
+
+        currentUser.FirstName = firstName;
+        currentUser.LastName = lastName;
+        currentUser.Username = username;
+        currentUser.Email = email;
+        currentUser.Reference = reference;
+        currentUser.IsSignedIn = !string.IsNullOrWhiteSpace(currentUser.Reference);
+        
+        return currentUser;
+    }
+}
+
+public interface IIdentityResolver
+{
+    public Task<CurrentUser> GetCurrentAccountAsync();
+}";
 
     }
 }

@@ -11,11 +11,9 @@ namespace ASP.NET.Core_Project_Builder
 {
     public static class CodeGenerator
     {
-        public static string SolutionPrefix { get; set; } = "Blink2";
+        public static string SolutionPrefix { get; set; } = "Blink";
         public static string SolutionPath { get; set; } = @"C:\Users\Beren\Documents\Projects\Test Projects";
-
         private static string _absolutePath { get => $"{SolutionPath}\\{SolutionPrefix}"; }
-
         private static string _entityNamespace { get => $"{SolutionPrefix}.Entity"; }
         private static string _domainNamespace { get => $"{SolutionPrefix}.Domain"; }
         private static string _serviceClientNamespace { get => $"{SolutionPrefix}.ServiceClient"; }
@@ -161,6 +159,7 @@ namespace ASP.NET.Core_Project_Builder
 
             Console.WriteLine("STEP: Generating user");
             await File.WriteAllTextAsync(@$"{_absolutePath}\\{modelsPath}\\User.cs", SharedTemplates.UserTemplate.Replace("{namespace}", modelNamespace));
+            await File.WriteAllTextAsync(@$"{_absolutePath}\\{modelsPath}\\CurrentUser.cs", SharedTemplates.CurrentUserTemplate.Replace("{namespace}", modelNamespace));
 
             #endregion
 
@@ -195,6 +194,12 @@ namespace ASP.NET.Core_Project_Builder
 
             Console.WriteLine("STEP: Generating postbody");
             await File.WriteAllTextAsync(@$"{_absolutePath}\\{utiltiesPath}\\PostBody.cs", SharedTemplates.PostBodyTemplate.Replace("{namespace}", utilitiesNamespace).Replace("{project}", SolutionPrefix));
+
+            Console.WriteLine("STEP: Generating token resolver");
+            await File.WriteAllTextAsync(@$"{_absolutePath}\\{utiltiesPath}\\TokenResolver.cs", SharedTemplates.TokenResolverTemplate.Replace("{namespace}", utilitiesNamespace).Replace("{project}", SolutionPrefix));
+
+            Console.WriteLine("STEP: Generating identity resolver");
+            await File.WriteAllTextAsync(@$"{_absolutePath}\\{utiltiesPath}\\IdentityResolver.cs", SharedTemplates.IdentityResolverTemplate.Replace("{namespace}", utilitiesNamespace).Replace("{project}", SolutionPrefix));
 
             Console.WriteLine("STEP: Generating web constants");
             await File.WriteAllTextAsync(@$"{_absolutePath}\\{utiltiesPath}\\{SolutionPrefix}WebConstants.cs", SharedTemplates.WebConstantsTemplate.Replace("{namespace}", utilitiesNamespace).Replace("{project}", SolutionPrefix).Replace("{new_id}", securityKey));
@@ -548,9 +553,16 @@ namespace ASP.NET.Core_Project_Builder
             if (!Directory.Exists($"{_absolutePath}\\{_webNamespace}\\Styles"))
                 Directory.CreateDirectory($"{_absolutePath}\\{_webNamespace}\\Styles");
 
+            if (!Directory.Exists($"{_absolutePath}\\{_webNamespace}\\ViewModels"))
+                Directory.CreateDirectory($"{_absolutePath}\\{_webNamespace}\\ViewModels");
+
+            if (!Directory.Exists($"{_absolutePath}\\{_webNamespace}\\ViewModels\\Accounts"))
+                Directory.CreateDirectory($"{_absolutePath}\\{_webNamespace}\\ViewModels\\Accounts");
+
             File.WriteAllText($"{_absolutePath}\\{_webNamespace}\\Scripts\\{SolutionPrefix}.js", WebTemplates.JqueryTemplate.Replace("{project}", SolutionPrefix).Replace("{project_lower}", SolutionPrefix.ToLower()));
             File.WriteAllText($"{_absolutePath}\\{_webNamespace}\\Styles\\Main.scss", WebTemplates.SiteCssTemplate);
             File.WriteAllText($"{_absolutePath}\\{_webNamespace}\\Views\\Shared\\_Layout.cshtml", WebTemplates.LayoutTemplate.Replace("{project}", SolutionPrefix).Replace("{project_lower}", SolutionPrefix.ToLower()));
+            File.WriteAllText($"{_absolutePath}\\{_webNamespace}\\ViewModels\\CreateUserViewModel.cshtml", WebTemplates.CreateUserViewModelTemplate.Replace("{project}", SolutionPrefix).Replace("{project_lower}", SolutionPrefix.ToLower()));
 
             return;
         }
