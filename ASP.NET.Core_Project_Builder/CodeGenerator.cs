@@ -438,6 +438,8 @@ namespace ASP.NET.Core_Project_Builder
             await InvokePowershell(powerShell);
 
             #endregion
+
+            File.WriteAllText($"{_absolutePath}\\{_repositoryNamespace}\\AccountRepository.cs", RepositoryTemplates.AccountRepositoryTemplate.Replace("{project}", SolutionPrefix));
         }
 
         public static async Task GenerateServiceProject()
@@ -472,6 +474,8 @@ namespace ASP.NET.Core_Project_Builder
                 File.Delete($"{_absolutePath}\\{_serviceNamespace}\\Class1.cs");
 
             #endregion
+
+            File.WriteAllText($"{_absolutePath}\\{_serviceNamespace}\\AccountService.cs", ServiceTemplates.AccountService.Replace("{project}", SolutionPrefix));
         }
 
         public static async Task GenerateWebProject()
