@@ -11,9 +11,9 @@ public static class DomainTemplates
     public const string UserDTOTemplate =
 @"using {project}.Shared.Models;
 
-namespace {namespace};
+namespace {project}.Domain.Models;
 
-public UserDTO : BaseDTO
+public class UserDTO : BaseDTO
 {
     public string Email { get; set; }
     public string FirstName { get; set; }

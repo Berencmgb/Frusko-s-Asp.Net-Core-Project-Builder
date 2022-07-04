@@ -11,7 +11,7 @@ namespace ASP.NET.Core_Project_Builder
 {
     public static class CodeGenerator
     {
-        public static string SolutionPrefix { get; set; } = "Blink";
+        public static string SolutionPrefix { get; set; } = "Blink2";
         public static string SolutionPath { get; set; } = @"C:\Users\Beren\Documents\Projects\Test Projects";
         private static string _absolutePath { get => $"{SolutionPath}\\{SolutionPrefix}"; }
         private static string _entityNamespace { get => $"{SolutionPrefix}.Entity"; }
@@ -347,6 +347,8 @@ namespace ASP.NET.Core_Project_Builder
                 Console.WriteLine($"Created domain models directory");
             }
 
+            File.WriteAllText($"{_absolutePath}\\{_domainNamespace}\\Models\\UserDTO.cs", DomainTemplates.UserDTOTemplate.Replace("{project}", SolutionPrefix));
+
             return;
         }
 
@@ -390,6 +392,8 @@ namespace ASP.NET.Core_Project_Builder
             await InvokePowershell(powerShell);
 
             #endregion
+
+            File.WriteAllText($"{_absolutePath}\\{_serviceClientNamespace}\\AccountServiceClient.cs", ServiceClientTemplates.AccountServiceClientTemplate.Replace("{project}", SolutionPrefix));
 
             return;
         }
@@ -556,13 +560,23 @@ namespace ASP.NET.Core_Project_Builder
             if (!Directory.Exists($"{_absolutePath}\\{_webNamespace}\\ViewModels"))
                 Directory.CreateDirectory($"{_absolutePath}\\{_webNamespace}\\ViewModels");
 
-            if (!Directory.Exists($"{_absolutePath}\\{_webNamespace}\\ViewModels\\Accounts"))
-                Directory.CreateDirectory($"{_absolutePath}\\{_webNamespace}\\ViewModels\\Accounts");
+            if (!Directory.Exists($"{_absolutePath}\\{_webNamespace}\\ViewModels\\Account"))
+                Directory.CreateDirectory($"{_absolutePath}\\{_webNamespace}\\ViewModels\\Account");
+
+            if (!Directory.Exists($"{_absolutePath}\\{_webNamespace}\\MappingProfiles"))
+                Directory.CreateDirectory($"{_absolutePath}\\{_webNamespace}\\MappingProfiles");
+
+            if (!Directory.Exists($"{_absolutePath}\\{_webNamespace}\\Controllers"))
+                Directory.CreateDirectory($"{_absolutePath}\\{_webNamespace}\\Controllers");
 
             File.WriteAllText($"{_absolutePath}\\{_webNamespace}\\Scripts\\{SolutionPrefix}.js", WebTemplates.JqueryTemplate.Replace("{project}", SolutionPrefix).Replace("{project_lower}", SolutionPrefix.ToLower()));
             File.WriteAllText($"{_absolutePath}\\{_webNamespace}\\Styles\\Main.scss", WebTemplates.SiteCssTemplate);
             File.WriteAllText($"{_absolutePath}\\{_webNamespace}\\Views\\Shared\\_Layout.cshtml", WebTemplates.LayoutTemplate.Replace("{project}", SolutionPrefix).Replace("{project_lower}", SolutionPrefix.ToLower()));
-            File.WriteAllText($"{_absolutePath}\\{_webNamespace}\\ViewModels\\CreateUserViewModel.cshtml", WebTemplates.CreateUserViewModelTemplate.Replace("{project}", SolutionPrefix).Replace("{project_lower}", SolutionPrefix.ToLower()));
+            File.WriteAllText($"{_absolutePath}\\{_webNamespace}\\ViewModels\\Account\\CreateUserViewModel.cs", WebTemplates.CreateUserViewModelTemplate.Replace("{project}", SolutionPrefix));
+            File.WriteAllText($"{_absolutePath}\\{_webNamespace}\\ViewModels\\Account\\UserViewModel.cs", WebTemplates.UserViewModelTemplate.Replace("{project}", SolutionPrefix));
+            File.WriteAllText($"{_absolutePath}\\{_webNamespace}\\MappingProfiles\\UserMappingProfile.cs", WebTemplates.UserMappingProfileTemplate.Replace("{project}", SolutionPrefix));
+            File.WriteAllText($"{_absolutePath}\\{_webNamespace}\\Controllers\\BaseController.cs", WebTemplates.BaseControllerTemplate.Replace("{project}", SolutionPrefix));
+            File.WriteAllText($"{_absolutePath}\\{_webNamespace}\\Controllers\\AccountController.cs", WebTemplates.AccountControllerTemplate.Replace("{project}", SolutionPrefix));
 
             return;
         }

@@ -13,6 +13,7 @@ namespace ASP.NET.Core_Project_Builder.Boilerplate
 @"using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using {project}.Shared.Utilities;
+using {project}.ServiceClients;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Newtonsoft.Json;
 
@@ -31,6 +32,7 @@ builder.Services.AddControllers().AddNewtonsoftJson(o =>
 builder.Services.AddScoped(typeof(IIdentityResolver), typeof(IdentityResolver));
 builder.Services.AddScoped(typeof(ITokenResolver), typeof(TokenResolver));
 builder.Services.AddScoped(typeof(IBaseServiceClient<>), typeof(BaseServiceClient<>));
+builder.Services.AddScoped(typeof(IAccountServiceClient), typeof(AccountServiceClient));
 
 
 builder.Services.AddAuthentication(o =>
@@ -146,7 +148,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
-namespace {namespace}.Controllers;
+namespace {project}.Web.Controllers;
 
 public class BaseController : Controller
 {
@@ -163,7 +165,7 @@ public class BaseController : Controller
     {
         return new HttpPayload
         {
-            SecurityToken = new JwtSecurityTokenHandler().WriteToken(await _tokenResolver.GetToken()),
+            SecurityToken = await _tokenResolver.GetTokenAsync(null),
             Uri = {project}ApiConstants.HostUrl
         };
     }
@@ -173,7 +175,7 @@ public class BaseController : Controller
         public const string CreateUserViewModelTemplate =
 @"using System.ComponentModel.DataAnnotations;
 
-namespace {project}.ViewModels.Account;
+namespace {project}.Web.ViewModels.Account;
 
 public class CreateUserViewModel
 {
@@ -201,11 +203,44 @@ public class CreateUserViewModel
 }
 ";
 
+        public const string UserViewModelTemplate =
+@"namespace {project}.Web.ViewModels.Account;
+
+public class UserViewModel
+{
+    public string Email { get; set; }
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
+    public string Username { get; set; }
+    public string Password { get; set; }
+}
+";
+
+        public const string UserMappingProfileTemplate =
+@"using AutoMapper;
+using {project}.Web.ViewModels.Account;
+using {project}.Domain.Models;
+
+namespace {project}.Web.MappingProfiles;
+
+public class UserMappingProfile : Profile
+{
+    public UserMappingProfile()
+    {
+        CreateMap<CreateUserViewModel, UserDTO>().ReverseMap();
+        CreateMap<UserViewModel, UserDTO>().ReverseMap();
+    }
+}
+
+";
+
         public const string AccountControllerTemplate =
 @"using AutoMapper;
+using {project}.Web.ViewModels.Account;
 using {project}.Domain.Models;
 using {project}.ServiceClients;
 using {project}.Shared;
+using {project}.Shared.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -213,7 +248,7 @@ using Microsoft.AspNetCore.Authentication;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
-namespace {namespace}.Controllers;
+namespace {project}.Web.Controllers;
 
 public class AccountController : BaseController
 {
@@ -246,6 +281,14 @@ public class AccountController : BaseController
         var userDTO = _mapper.Map<UserDTO>(viewModel);
 
         var result = await _accountServiceClient.RegisterAsync(payload, userDTO);
+
+        var token = new JwtSecurityTokenHandler().ReadJwtToken(result.Value);
+
+        var identity = new ClaimsPrincipal(new ClaimsIdentity(token.Claims, ""{project} Cookie""));
+
+        await HttpContext.SignInAsync(identity);
+
+        return RedirectToAction(""index"", ""home"");
     }
     
 }
