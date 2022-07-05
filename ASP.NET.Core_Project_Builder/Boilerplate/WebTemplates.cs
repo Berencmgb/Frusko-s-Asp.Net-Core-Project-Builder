@@ -266,14 +266,14 @@ public class AccountController : BaseController
         _identityResolver = identityResolver;
     }
 
-    [HttpGet(""Register"")]
+    [HttpGet(""Account/Register"")]
     public async Task<IActionResult> Register()
     {
         var viewModel = new CreateUserViewModel {  };
         return View(viewModel);
     }
 
-    [HttpPost(""Register"")]
+    [HttpPost(""Account/Register"")]
     public async Task<IActionResult> Register(CreateUserViewModel viewModel)
     {
         var payload = await GetPayload();
@@ -290,8 +290,64 @@ public class AccountController : BaseController
 
         return RedirectToAction(""index"", ""home"");
     }
+
+    [HttpGet(""Account/Login"")]
+    public async Task<IActionResult> Login()
+    {
+        var viewModel = new CreateUserViewModel {  };
+        return View(viewModel);
+    }
+
+    [HttpPost(""Account/Login"")]
+    public async Task<IActionResult> Login(UserViewModel viewModel)
+    {
+        var payload = await GetPayload();
+
+        var userDTO = _mapper.Map<UserDTO>(viewModel);
+
+        var result = await _accountServiceClient.LoginAsync(payload, userDTO);
+
+        var token = new JwtSecurityTokenHandler().ReadJwtToken(result.Value);
+
+        var identity = new ClaimsPrincipal(new ClaimsIdentity(token.Claims, ""{project} Cookie""));
+
+        await HttpContext.SignInAsync(identity);
+
+        return RedirectToAction(""index"", ""home"");
+    }
     
 }
+";
+
+        public const string RegisterHtmlTemplate =
+@"@using {project}.Web.ViewModels.Account
+
+@model CreateUserViewModel;
+
+
+<form asp-action=""Register"" asp-controller=""Account"">
+    <input asp-for=""Email"" placeholder=""Email"" />
+    <input asp-for=""FirstName"" placeholder=""FirstName"" />
+    <input asp-for=""LastName"" placeholder=""LastName"" />
+    <input asp-for=""Username"" placeholder=""Username"" />
+    <input asp-for=""Password"" type=""password"" placeholder=""Password"" />
+    <input asp-for=""ConfirmPassword"" type=""password"" placeholder=""Confirm Password"" />
+    <button type=""submit"">Register</button>
+</form>
+
+";
+
+        public const string LoginHtmlTemplate =
+@"@using {project}.Web.ViewModels.Account
+
+@model UserViewModel;
+
+<form asp-action=""Register"" asp-controller=""Account"">
+    <input asp-for=""Username"" placeholder=""Username"" />
+    <input asp-for=""Password"" type=""password"" placeholder=""Password"" />
+    <button type=""submit"">Login</button>
+</form>
+
 ";
 
 

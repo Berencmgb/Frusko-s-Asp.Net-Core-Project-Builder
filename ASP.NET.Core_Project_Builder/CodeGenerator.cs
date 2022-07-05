@@ -11,7 +11,7 @@ namespace ASP.NET.Core_Project_Builder
 {
     public static class CodeGenerator
     {
-        public static string SolutionPrefix { get; set; } = "Blink2";
+        public static string SolutionPrefix { get; set; } = "BlinkFinalTest1";
         public static string SolutionPath { get; set; } = @"C:\Users\Beren\Documents\Projects\Test Projects";
         private static string _absolutePath { get => $"{SolutionPath}\\{SolutionPrefix}"; }
         private static string _entityNamespace { get => $"{SolutionPrefix}.Entity"; }
@@ -200,6 +200,9 @@ namespace ASP.NET.Core_Project_Builder
 
             Console.WriteLine("STEP: Generating identity resolver");
             await File.WriteAllTextAsync(@$"{_absolutePath}\\{utiltiesPath}\\IdentityResolver.cs", SharedTemplates.IdentityResolverTemplate.Replace("{namespace}", utilitiesNamespace).Replace("{project}", SolutionPrefix));
+
+            Console.WriteLine("STEP: Generating base api controller");
+            await File.WriteAllTextAsync(@$"{_absolutePath}\\{utiltiesPath}\\BaseApiController.cs", SharedTemplates.BaseApiControllerTemplate.Replace("{project}", SolutionPrefix));
 
             Console.WriteLine("STEP: Generating web constants");
             await File.WriteAllTextAsync(@$"{_absolutePath}\\{utiltiesPath}\\{SolutionPrefix}WebConstants.cs", SharedTemplates.WebConstantsTemplate.Replace("{namespace}", utilitiesNamespace).Replace("{project}", SolutionPrefix).Replace("{new_id}", securityKey));
@@ -564,6 +567,12 @@ namespace ASP.NET.Core_Project_Builder
             if (!Directory.Exists($"{_absolutePath}\\{_webNamespace}\\ViewModels"))
                 Directory.CreateDirectory($"{_absolutePath}\\{_webNamespace}\\ViewModels");
 
+            if (!Directory.Exists($"{_absolutePath}\\{_webNamespace}\\Views"))
+                Directory.CreateDirectory($"{_absolutePath}\\{_webNamespace}\\Views");
+
+            if (!Directory.Exists($"{_absolutePath}\\{_webNamespace}\\Views\\Account"))
+                Directory.CreateDirectory($"{_absolutePath}\\{_webNamespace}\\Views\\Account");
+
             if (!Directory.Exists($"{_absolutePath}\\{_webNamespace}\\ViewModels\\Account"))
                 Directory.CreateDirectory($"{_absolutePath}\\{_webNamespace}\\ViewModels\\Account");
 
@@ -581,6 +590,8 @@ namespace ASP.NET.Core_Project_Builder
             File.WriteAllText($"{_absolutePath}\\{_webNamespace}\\MappingProfiles\\UserMappingProfile.cs", WebTemplates.UserMappingProfileTemplate.Replace("{project}", SolutionPrefix));
             File.WriteAllText($"{_absolutePath}\\{_webNamespace}\\Controllers\\BaseController.cs", WebTemplates.BaseControllerTemplate.Replace("{project}", SolutionPrefix));
             File.WriteAllText($"{_absolutePath}\\{_webNamespace}\\Controllers\\AccountController.cs", WebTemplates.AccountControllerTemplate.Replace("{project}", SolutionPrefix));
+            File.WriteAllText($"{_absolutePath}\\{_webNamespace}\\Views\\Account\\Register.cshtml", WebTemplates.RegisterHtmlTemplate.Replace("{project}", SolutionPrefix));
+            File.WriteAllText($"{_absolutePath}\\{_webNamespace}\\Views\\Account\\Login.cshtml", WebTemplates.LoginHtmlTemplate.Replace("{project}", SolutionPrefix));
 
             return;
         }
@@ -658,8 +669,15 @@ namespace ASP.NET.Core_Project_Builder
 
             #endregion
 
+            if (!Directory.Exists($"{_absolutePath}\\{_apiNamespace}\\Controllers"))
+                Directory.CreateDirectory($"{_absolutePath}\\{_apiNamespace}\\Controllers");
+
+            if (!Directory.Exists($"{_absolutePath}\\{_apiNamespace}\\MappingProfiles"))
+                Directory.CreateDirectory($"{_absolutePath}\\{_apiNamespace}\\MappingProfiles");
+
             File.WriteAllText($"{_absolutePath}\\{_apiNamespace}\\Program.cs", ApiTemplates.ProgramTemplate.Replace("{project}", SolutionPrefix));
             File.WriteAllText($"{_absolutePath}\\{_apiNamespace}\\AppSettings.json", ApiTemplates.AppSettingsTemplate.Replace("{project}", SolutionPrefix));
+            File.WriteAllText($"{_absolutePath}\\{_apiNamespace}\\MappingProfiles\\UserMappingProfile.cs", ApiTemplates.UserMappingProfileTemplate.Replace("{project}", SolutionPrefix));
 
             return;
         }

@@ -39,11 +39,28 @@ public class AccountServiceClient : BaseServiceClient<UserDTO>, IAccountServiceC
 
         return JsonConvert.DeserializeObject<Result<string>>(json);
     }
+
+    public async Task<Result<string>> LoginAsync(HttpPayload payload, UserDTO dto)
+    {
+        var client = await GetClient(payload);
+
+        var postbody = JsonConvert.SerializeObject(dto);
+
+        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(""application/json""));
+        var result = await client.PostAsync(@$""{AdaptiveUrl}/Login"", new StringContent(postbody, Encoding.UTF8, ""application/json""));
+
+        var json = await result.Content.ReadAsStringAsync();
+
+        return JsonConvert.DeserializeObject<Result<string>>(json);
+    }
+
+    protected new string AdaptiveUrl { get => ""Account""; }
 }
 
 public interface IAccountServiceClient : IBaseServiceClient<UserDTO>
 {
     public Task<Result<string>> RegisterAsync(HttpPayload payload, UserDTO dto);
+    public Task<Result<string>> LoginAsync(HttpPayload payload, UserDTO dto);
 }
 ";
 }
