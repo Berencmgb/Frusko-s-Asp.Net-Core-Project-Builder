@@ -49,3 +49,4 @@ await CodeGenerator.GenerateRepositoryProject();
 await CodeGenerator.GenerateServiceProject();
 await CodeGenerator.GenerateWebProject();
 await CodeGenerator.GenerateAPI();
+await CodeGenerator.InitialiseDatabase();
