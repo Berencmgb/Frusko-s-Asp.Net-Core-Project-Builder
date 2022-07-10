@@ -11,7 +11,7 @@ namespace ASP.NET.Core_Project_Builder
 {
     public static class CodeGenerator
     {
-        public static string SolutionPrefix { get; set; } = "BlinkHostUrlText";
+        public static string SolutionPrefix { get; set; } = "Blink";
         public static string SolutionPath { get; set; } = @"C:\Users\Beren\Documents\Projects\Test Projects";
         private static string _absolutePath { get => $"{SolutionPath}\\{SolutionPrefix}"; }
         private static string _entityNamespace { get => $"{SolutionPrefix}.Entity"; }
@@ -699,7 +699,7 @@ namespace ASP.NET.Core_Project_Builder
 
             powerShell.Commands.AddScript($"dotnet run --project \"{_absolutePath}\\{_apiNamespace}\"");
             Console.WriteLine("STEP: Running API to set Host Url");
-            var output = await powerShell.InvokeAsync();
+            var output = powerShell.Invoke();
 
             var httpUrl = output.FirstOrDefault(a => a.ToString().Contains("https://"))?.ToString();
 
@@ -711,9 +711,9 @@ namespace ASP.NET.Core_Project_Builder
             if (string.IsNullOrWhiteSpace(httpUrl))
                 return;
 
-            var index1 = httpUrl.IndexOf("https://");
+            var httpsIndex = httpUrl.IndexOf("https://");
 
-            apiConstantsText = apiConstantsText.Replace("{put_url_here}", httpUrl.Substring(index1, httpUrl.Length - index1));
+            apiConstantsText = apiConstantsText.Replace("{put_url_here}", httpUrl.Substring(httpsIndex, httpUrl.Length - httpsIndex));
             await File.WriteAllTextAsync($"{_absolutePath}\\{_sharedNamespace}\\Utilities\\{SolutionPrefix}ApiConstants.cs", apiConstantsText);
 
             return;
@@ -739,7 +739,7 @@ namespace ASP.NET.Core_Project_Builder
 
         private static async Task InvokePowershell(PowerShell powerShell)
         {
-            var output = await powerShell.InvokeAsync();
+            var output = powerShell.Invoke();
 
             if (output == null)
                 return;
