@@ -1,6 +1,6 @@
 ﻿using ASP.NET.Core_Project_Builder;
 
-var inputs = true;
+var inputs = false;
 
 while (!inputs)
 {
@@ -29,15 +29,24 @@ while (!inputs)
     Console.WriteLine($"Your solution prefix will be {CodeGenerator.SolutionPrefix}");
     Console.WriteLine($"and will be saved to {CodeGenerator.SolutionPath}\\{CodeGenerator.SolutionPrefix}");
 
-    Console.Write("Would you like to proceed? (Y/N): ");
+    Console.Write("Would you like to set api host url automatically? **THIS FEATURE IS EXPERIMENTAL AND DOES NOT ALWAYS WORK** (Y/N): ");
+
     var key = Console.ReadKey();
+    Console.Write("\n");
+
+    CodeGenerator.GenerateHostUrl = key.Key == ConsoleKey.Y;
+
+    Console.Write("Would you like to proceed? (Y/N): ");
+    key = Console.ReadKey();
+    Console.Write("\n");
 
     if (key.Key == ConsoleKey.Y)
-    {
         inputs = true;
-    }
 
-    
+    else
+        Console.Clear();
+
+
 }
 
 await CodeGenerator.GenerateRootFolder();

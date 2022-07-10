@@ -11,8 +11,9 @@ namespace ASP.NET.Core_Project_Builder
 {
     public static class CodeGenerator
     {
-        public static string SolutionPrefix { get; set; } = "Blink";
-        public static string SolutionPath { get; set; } = @"C:\Users\Beren\Documents\Projects\Test Projects";
+        public static bool GenerateHostUrl { get; set; }
+        public static string SolutionPrefix { get; set; }
+        public static string SolutionPath { get; set; }
         private static string _absolutePath { get => $"{SolutionPath}\\{SolutionPrefix}"; }
         private static string _entityNamespace { get => $"{SolutionPrefix}.Entity"; }
         private static string _domainNamespace { get => $"{SolutionPrefix}.Domain"; }
@@ -696,6 +697,8 @@ namespace ASP.NET.Core_Project_Builder
             await File.WriteAllTextAsync($"{_absolutePath}\\{_apiNamespace}\\AppSettings.json", ApiTemplates.AppSettingsTemplate.Replace("{project}", SolutionPrefix));
             await File.WriteAllTextAsync($"{_absolutePath}\\{_apiNamespace}\\MappingProfiles\\UserMappingProfile.cs", ApiTemplates.UserMappingProfileTemplate.Replace("{project}", SolutionPrefix));
 
+            if (!GenerateHostUrl)
+                return;
 
             powerShell.Commands.AddScript($"dotnet run --project \"{_absolutePath}\\{_apiNamespace}\"");
             Console.WriteLine("STEP: Running API to set Host Url");
