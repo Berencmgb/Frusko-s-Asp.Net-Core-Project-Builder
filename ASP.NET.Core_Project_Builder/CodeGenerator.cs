@@ -11,7 +11,7 @@ namespace ASP.NET.Core_Project_Builder
 {
     public static class CodeGenerator
     {
-        public static string SolutionPrefix { get; set; } = "BlinkFinalTest1";
+        public static string SolutionPrefix { get; set; } = "BlinkHostUrlText";
         public static string SolutionPath { get; set; } = @"C:\Users\Beren\Documents\Projects\Test Projects";
         private static string _absolutePath { get => $"{SolutionPath}\\{SolutionPrefix}"; }
         private static string _entityNamespace { get => $"{SolutionPrefix}.Entity"; }
@@ -696,6 +696,26 @@ namespace ASP.NET.Core_Project_Builder
             await File.WriteAllTextAsync($"{_absolutePath}\\{_apiNamespace}\\AppSettings.json", ApiTemplates.AppSettingsTemplate.Replace("{project}", SolutionPrefix));
             await File.WriteAllTextAsync($"{_absolutePath}\\{_apiNamespace}\\MappingProfiles\\UserMappingProfile.cs", ApiTemplates.UserMappingProfileTemplate.Replace("{project}", SolutionPrefix));
 
+
+            powerShell.Commands.AddScript($"dotnet run --project \"{_absolutePath}\\{_apiNamespace}\"");
+            Console.WriteLine("STEP: Running API to set Host Url");
+            var output = await powerShell.InvokeAsync();
+
+            var httpUrl = output.FirstOrDefault(a => a.ToString().Contains("https://"))?.ToString();
+
+            if (string.IsNullOrWhiteSpace(httpUrl))
+                return;
+
+            var apiConstantsText = await File.ReadAllTextAsync($"{_absolutePath}\\{_sharedNamespace}\\Utilities\\{SolutionPrefix}ApiConstants.cs");
+
+            if (string.IsNullOrWhiteSpace(httpUrl))
+                return;
+
+            var index1 = httpUrl.IndexOf("https://");
+
+            apiConstantsText = apiConstantsText.Replace("{put_url_here}", httpUrl.Substring(index1, httpUrl.Length - index1));
+            await File.WriteAllTextAsync($"{_absolutePath}\\{_sharedNamespace}\\Utilities\\{SolutionPrefix}ApiConstants.cs", apiConstantsText);
+
             return;
         }
 
@@ -707,11 +727,11 @@ namespace ASP.NET.Core_Project_Builder
             Console.WriteLine("STEP: Installing dotnet-ef");
             await InvokePowershell(powerShell);
 
-            powerShell.Commands.AddScript($"dotnet ef migrations add InitDatabase --project \"{_entityNamespace}\" --startup-project \"{_apiNamespace}\"");
+            powerShell.Commands.AddScript($"dotnet ef migrations add InitDatabase --project \"{_absolutePath}\\{_entityNamespace}\" --startup-project \"{_absolutePath}\\{_apiNamespace}\"");
             Console.WriteLine("STEP: Adding Database Migration");
             await InvokePowershell(powerShell);
 
-            powerShell.Commands.AddScript($"dotnet ef database update --project \"{_entityNamespace}\" --startup-project \"{_apiNamespace}\"");
+            powerShell.Commands.AddScript($"dotnet ef database update --project \"{_absolutePath}\\{_entityNamespace}\" --startup-project \"{_absolutePath}\\{_apiNamespace}\"");
             Console.WriteLine("STEP: Updating Database");
             await InvokePowershell(powerShell);
         }
@@ -719,7 +739,7 @@ namespace ASP.NET.Core_Project_Builder
 
         private static async Task InvokePowershell(PowerShell powerShell)
         {
-            var output = powerShell.Invoke();
+            var output = await powerShell.InvokeAsync();
 
             if (output == null)
                 return;
