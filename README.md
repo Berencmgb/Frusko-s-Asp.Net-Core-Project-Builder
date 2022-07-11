@@ -5,7 +5,7 @@ input your solution name and where you'd like to save and let the tool work it's
 to allow for saving to an SQL database.
 
 ## After Use - Additional setup
-The tool is designed to allow you to get right into developing. However, due to some faults if my own, some setup may be required. You might need to perform some of the following steps:
+The tool is designed to allow you to get right into developing. However, due to some faults of my own, some setup may be required. You might need to perform some of the following steps:
 - Take the IIS url for the API and place it in the {project}ApiConstants test host url - See ***Known Issues***
 - Create a database migration and update the database context.
 - Set startup projects in visual studio to web and api projects.
