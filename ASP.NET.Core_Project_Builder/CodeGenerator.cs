@@ -311,6 +311,9 @@ namespace ASP.NET.Core_Project_Builder
             Console.WriteLine("STEP: Generating app db context");
             await File.WriteAllTextAsync(@$"{_absolutePath}\\{_entityNamespace}\\AppDbContext.cs", EntityTemplates.AppDbContext.Replace("{namespace}", entityNamespace).Replace("{project}", SolutionPrefix));
 
+            Console.WriteLine("STEP: Generating program file");
+            await File.WriteAllTextAsync(@$"{_absolutePath}\\{_entityNamespace}\\Program.cs", EntityTemplates.ProgramTemplate.Replace("{namespace}", entityNamespace).Replace("{project}", SolutionPrefix));
+
             return;
         }
 
