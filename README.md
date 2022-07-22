@@ -12,7 +12,12 @@ The tool is designed to allow you to get right into developing. However, due to 
 - Set startup projects in visual studio to web and api projects.
 
 ## Known Issues
-- Sometimes the API host url will hang. Not sure what causes this. Sometimes it works and sometimes it doesn't. If this isn't working for you, select 'n' when the tool asks if you want to generate the api host url.
+- Sometimes the API host url will hang. Not sure what causes this. Sometimes it works and sometimes it doesn't. If this isn't working for you, select 'n' when the tool asks if you want to generate the api host url - pending development.
+- Razor Compilation doesn't work by default - fix incoming
+- Gulpfile doesn't move bootstrap icon fonts - fix incoming
+- There is no BaseViewModel - fix incoming
+- The register and login pages have no style - pending development.
+- Result with generic parameter throws an error when mapping between model and DTO - pending development
 
 ## Upcoming Updates
 - Improved Includes system using IQueryable.
