@@ -97,7 +97,10 @@ var paths = {
     css: [
         ""./node_modules/bootstrap-icons/font/bootstrap-icons.css"",
         ""./node_modules/bootstrap/dist/css/bootstrap.css"",
-    ]
+    ],
+    fonts: [
+        `./node_modules/bootstrap-icons/font/fonts/bootstrap-icons.woff`,
+    ], 
 }
 
 function buildJs(callback){
@@ -130,11 +133,18 @@ function buildBundleCss(callback){
     callback();
 }
 
-exports.build = series(buildJs, buildCss, buildBundleJs, buildBundleCss);
+function buildFonts(cb) {
+    return gulp.src(paths.fonts)
+        .pipe(gulp.dest('./wwwroot/css/fonts'));
+    cb();
+}
+
+exports.build = series(buildJs, buildCss, buildBundleJs, buildBundleCss, buildFonts);
 exports.buildJs = buildJs;
 exports.buildCss = buildCss;
 exports.buildBundleJs = buildBundleJs;
 exports.buildBundleCss = buildBundleCss;
+exports.buildFonts = buildFonts;
 ";
 
         public const string BaseControllerTemplate =
