@@ -348,6 +348,16 @@ public class AccountController : BaseController
 
 ";
 
+        public const string BaseViewModelTemplate =
+@"namespace {project}.Web.ViewModels;
+
+public class BaseViewModel
+{
+    public string? Reference { get; set; }
+    public bool IsDeleted { get; set; }
+}
+";
+
         public const string LoginHtmlTemplate =
 @"@using {project}.Web.ViewModels.Account
 
