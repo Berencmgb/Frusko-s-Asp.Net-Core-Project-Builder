@@ -34,6 +34,7 @@ builder.Services.AddScoped(typeof(ITokenResolver), typeof(TokenResolver));
 builder.Services.AddScoped(typeof(IBaseServiceClient<>), typeof(BaseServiceClient<>));
 builder.Services.AddScoped(typeof(IAccountServiceClient), typeof(AccountServiceClient));
 
+builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 
 builder.Services.AddAuthentication(o =>
 {
