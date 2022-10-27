@@ -164,7 +164,7 @@ namespace {namespace}
             _mapper = mapper;
         }
 
-        public async Task<Result> DeleteAsync(TEntity entity)
+        public virtual async Task<Result> DeleteAsync(TEntity entity)
         {
             var result = new Result { };
             try
@@ -183,7 +183,7 @@ namespace {namespace}
                 return result;
         }
     
-        public async Task<Result<List<TEntity>>> GetAllAsync()
+        public virtual async Task<Result<List<TEntity>>> GetAllAsync()
         {
             var result = new Result<List<TEntity>> { };
         
@@ -214,7 +214,7 @@ namespace {namespace}
             return result;
         }
         
-        public async Task<Result<List<TEntity>>> GetAllAsync(Pagination pagination)
+        public virtual async Task<Result<List<TEntity>>> GetAllAsync(Pagination pagination)
         {
             var result = new Result<List<TEntity>> { };
         
@@ -244,7 +244,7 @@ namespace {namespace}
             return result;
         }
         
-        public async Task<Result<List<TEntity>>> GetAllWhereAsync(string expression)
+        public virtual async Task<Result<List<TEntity>>> GetAllWhereAsync(string expression)
         {
             var result = new Result<List<TEntity>> { };
         
@@ -274,7 +274,7 @@ namespace {namespace}
             return result;
         }
         
-        public async Task<Result<List<TEntity>>> GetAllWhereAsync(string expression, Pagination pagination)
+        public virtual async Task<Result<List<TEntity>>> GetAllWhereAsync(string expression, Pagination pagination)
         {
             var result = new Result<List<TEntity>> { };
         
@@ -304,7 +304,7 @@ namespace {namespace}
             return result;
         }
         
-        public async Task<Result<List<TEntity>>> GetAllWhereAsync(Expression<Func<TEntity, bool>> expression)
+        public virtual async Task<Result<List<TEntity>>> GetAllWhereAsync(Expression<Func<TEntity, bool>> expression)
         {
             var result = new Result<List<TEntity>> { };
         
@@ -334,7 +334,7 @@ namespace {namespace}
             return result;
         }
         
-        public async Task<Result<List<TEntity>>> GetAllWhereAsync(Expression<Func<TEntity, bool>> expression, Pagination pagination)
+        public virtual async Task<Result<List<TEntity>>> GetAllWhereAsync(Expression<Func<TEntity, bool>> expression, Pagination pagination)
         {
             var result = new Result<List<TEntity>> { };
         
@@ -364,7 +364,7 @@ namespace {namespace}
             return result;
         }
         
-        public async Task<TEntity> GetSingleWhereAsync(string expression)
+        public virtual async Task<TEntity> GetSingleWhereAsync(string expression)
         {
             if (Includes == null)
                 return await Table.FirstOrDefaultAsync(expression);
@@ -378,7 +378,7 @@ namespace {namespace}
             return await result.FirstOrDefaultAsync(expression);
         }
         
-        public async Task<TEntity> GetSingleWhereAsync(Expression<Func<TEntity, bool>> expression)
+        public virtual async Task<TEntity> GetSingleWhereAsync(Expression<Func<TEntity, bool>> expression)
         {
             if (Includes == null)
                 return await Table.FirstOrDefaultAsync(expression);
@@ -422,7 +422,7 @@ namespace {namespace}
             await Context.SaveChangesAsync();
         }
         
-        public async Task<Result<TEntity>> UpdateAsync(TEntity entity)
+        public virtual async Task<Result<TEntity>> UpdateAsync(TEntity entity)
         {
             var result = new Result<TEntity> { };
             result.Value = entity;
@@ -444,7 +444,7 @@ namespace {namespace}
             return result;
         }
         
-        public async Task<Result> DeleteAsync(string reference)
+        public virtual async Task<Result> DeleteAsync(string reference)
         {
             var result = new Result { };
             try
@@ -463,7 +463,7 @@ namespace {namespace}
             return result;
         }
         
-        public async Task<Result> DeleteFromTableAsync(string reference)
+        public virtual async Task<Result> DeleteFromTableAsync(string reference)
         {
             var result = new Result { };
             try
@@ -545,14 +545,14 @@ namespace {namespace}
 
         #region GetAll
 
-        public async virtual Task<Result<List<TEntity>>> GetAllAsync()
+        public virtual async Task<Result<List<TEntity>>> GetAllAsync()
         {
             var result = await Repository.GetAllAsync();
 
             return result;
         }
 
-        public async Task<Result<List<TEntity>>> GetAllAsync(List<string> includes)
+        public virtual async Task<Result<List<TEntity>>> GetAllAsync(List<string> includes)
         {
             foreach (var include in includes)
             {
@@ -561,18 +561,18 @@ namespace {namespace}
             return await Repository.GetAllAsync();
         }
 
-        public async Task<Result<List<TEntity>>> GetAllAsync(params Expression<Func<TEntity, object>>[] includes)
+        public virtual async Task<Result<List<TEntity>>> GetAllAsync(params Expression<Func<TEntity, object>>[] includes)
         {
             Repository.Includes.AddRange(StringHelper.GenerateIncludes(includes));
             return await Repository.GetAllAsync();
         }
 
-        public async Task<Result<List<TEntity>>> GetAllAsync(Pagination page)
+        public virtual async Task<Result<List<TEntity>>> GetAllAsync(Pagination page)
         {
             return await Repository.GetAllAsync(page);
         }
 
-        public async Task<Result<List<TEntity>>> GetAllAsync(Pagination page, List<string> includes)
+        public virtual async Task<Result<List<TEntity>>> GetAllAsync(Pagination page, List<string> includes)
         {
             foreach (var include in includes)
             {
@@ -581,7 +581,7 @@ namespace {namespace}
             return await Repository.GetAllAsync(page);
         }
 
-        public async Task<Result<List<TEntity>>> GetAllAsync(Pagination page, params Expression<Func<TEntity, object>>[] includes)
+        public virtual async Task<Result<List<TEntity>>> GetAllAsync(Pagination page, params Expression<Func<TEntity, object>>[] includes)
         {
             Repository.Includes.AddRange(StringHelper.GenerateIncludes(includes));
             return await Repository.GetAllAsync(page);
@@ -591,7 +591,7 @@ namespace {namespace}
 
         #region GetAllWhere
 
-        public async virtual Task<Result<List<TEntity>>> GetAllWhereAsync(string expression, List<string> includes)
+        public virtual async Task<Result<List<TEntity>>> GetAllWhereAsync(string expression, List<string> includes)
         {
             foreach (var include in includes)
             {
@@ -600,34 +600,34 @@ namespace {namespace}
             return await Repository.GetAllWhereAsync(expression);
         }
 
-        public async virtual Task<Result<List<TEntity>>> GetAllWhereAsync(Expression<Func<TEntity, bool>> expression, params Expression<Func<TEntity, object>>[] includes)
+        public virtual async Task<Result<List<TEntity>>> GetAllWhereAsync(Expression<Func<TEntity, bool>> expression, params Expression<Func<TEntity, object>>[] includes)
         {
             Repository.Includes.AddRange(StringHelper.GenerateIncludes(includes));
             return await Repository.GetAllWhereAsync(expression);
         }
 
-        public async Task<Result<List<TEntity>>> GetAllWhereAsync(Expression<Func<TEntity, bool>> expression)
+        public virtual async Task<Result<List<TEntity>>> GetAllWhereAsync(Expression<Func<TEntity, bool>> expression)
         {
             return await Repository.GetAllWhereAsync(expression);
         }
 
-        public async Task<Result<List<TEntity>>> GetAllWhereAsync(string expression)
+        public virtual async Task<Result<List<TEntity>>> GetAllWhereAsync(string expression)
         {
             return await Repository.GetAllWhereAsync(expression);
         }
 
-        public async Task<Result<List<TEntity>>> GetAllWhereAsync(Expression<Func<TEntity, bool>> expression, Pagination page, params Expression<Func<TEntity, object>>[] includes)
+        public virtual async Task<Result<List<TEntity>>> GetAllWhereAsync(Expression<Func<TEntity, bool>> expression, Pagination page, params Expression<Func<TEntity, object>>[] includes)
         {
             Repository.Includes.AddRange(StringHelper.GenerateIncludes(includes));
             return await Repository.GetAllWhereAsync(expression, page);
         }
 
-        public async Task<Result<List<TEntity>>> GetAllWhereAsync(Expression<Func<TEntity, bool>> expression, Pagination page)
+        public virtual async Task<Result<List<TEntity>>> GetAllWhereAsync(Expression<Func<TEntity, bool>> expression, Pagination page)
         {
             return await Repository.GetAllWhereAsync(expression, page);
         }
 
-        public async Task<Result<List<TEntity>>> GetAllWhereAsync(string expression, List<string> includes, Pagination page)
+        public virtual async Task<Result<List<TEntity>>> GetAllWhereAsync(string expression, List<string> includes, Pagination page)
         {
             foreach (var include in includes)
             {
@@ -645,13 +645,13 @@ namespace {namespace}
 
         #region GetSingleWhere
 
-        public async virtual Task<TEntity> GetSingleWhereAsync(Expression<Func<TEntity, bool>> expression, params Expression<Func<TEntity, object>>[] includes)
+        public virtual async Task<TEntity> GetSingleWhereAsync(Expression<Func<TEntity, bool>> expression, params Expression<Func<TEntity, object>>[] includes)
         {
             Repository.Includes.AddRange(StringHelper.GenerateIncludes(includes));
             return await Repository.GetSingleWhereAsync(expression);
         }
 
-        public async virtual Task<TEntity> GetSingleWhereAsync(string expression, List<string> includes)
+        public virtual async Task<TEntity> GetSingleWhereAsync(string expression, List<string> includes)
         {
             foreach (var include in includes)
             {
@@ -660,34 +660,34 @@ namespace {namespace}
             return await Repository.GetSingleWhereAsync(expression);
         }
 
-        public async Task<TEntity> GetSingleWhereAsync(Expression<Func<TEntity, bool>> expression)
+        public virtual async Task<TEntity> GetSingleWhereAsync(Expression<Func<TEntity, bool>> expression)
         {
             return await Repository.GetSingleWhereAsync(expression);
         }
 
-        public async Task<TEntity> GetSingleWhereAsync(string expression)
+        public virtual async Task<TEntity> GetSingleWhereAsync(string expression)
         {
             return await Repository.GetSingleWhereAsync(expression);
         }
 
         #endregion
 
-        public async virtual Task<Result> DeleteAsync(TEntity entity)
+        public virtual async Task<Result> DeleteAsync(TEntity entity)
         {
             return await Repository.DeleteAsync(entity);
         }
 
-        public async virtual Task<Result<TEntity>> AddAsync(TEntity entity)
+        public virtual async Task<Result<TEntity>> AddAsync(TEntity entity)
         {
             return await Repository.InsertAsync(entity);
         }
 
-        public async virtual Task<Result<TEntity>> UpdateAsync(TEntity entity)
+        public virtual async Task<Result<TEntity>> UpdateAsync(TEntity entity)
         {
             return await Repository.UpdateAsync(entity);
         }
 
-        public async Task<Result> DeleteAsync(string reference)
+        public virtual async Task<Result> DeleteAsync(string reference)
         {
             return await Repository.DeleteAsync(reference);
         }
