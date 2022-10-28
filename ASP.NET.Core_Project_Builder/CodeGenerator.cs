@@ -179,15 +179,6 @@ namespace ASP.NET.Core_Project_Builder
             Console.WriteLine("STEP: Generating shared db context");
             await File.WriteAllTextAsync(@$"{_absolutePath}\\{utiltiesPath}\\SharedDbContext.cs", SharedTemplates.SharedDbContext.Replace("{namespace}", utilitiesNamespace).Replace("{project}", SolutionPrefix));
 
-            Console.WriteLine("STEP: Generating base repository");
-            await File.WriteAllTextAsync(@$"{_absolutePath}\\{utiltiesPath}\\BaseRepository.cs", SharedTemplates.BaseRepositoryTemplate.Replace("{namespace}", utilitiesNamespace).Replace("{project}", SolutionPrefix));
-
-            Console.WriteLine("STEP: Generating base service");
-            await File.WriteAllTextAsync(@$"{_absolutePath}\\{utiltiesPath}\\BaseService.cs", SharedTemplates.BaseServiceTemplate.Replace("{namespace}", utilitiesNamespace).Replace("{project}", SolutionPrefix));
-
-            Console.WriteLine("STEP: Generating base service client");
-            await File.WriteAllTextAsync(@$"{_absolutePath}\\{utiltiesPath}\\BaseServiceClient.cs", SharedTemplates.BaseServiceClientTemplate.Replace("{namespace}", utilitiesNamespace).Replace("{project}", SolutionPrefix));
-
             Console.WriteLine("STEP: Generating http payload");
             await File.WriteAllTextAsync(@$"{_absolutePath}\\{utiltiesPath}\\HttpPayload.cs", SharedTemplates.HttpPayloadTemplate.Replace("{namespace}", utilitiesNamespace));
 
@@ -199,9 +190,6 @@ namespace ASP.NET.Core_Project_Builder
 
             Console.WriteLine("STEP: Generating identity resolver");
             await File.WriteAllTextAsync(@$"{_absolutePath}\\{utiltiesPath}\\IdentityResolver.cs", SharedTemplates.IdentityResolverTemplate.Replace("{namespace}", utilitiesNamespace).Replace("{project}", SolutionPrefix));
-
-            Console.WriteLine("STEP: Generating base api controller");
-            await File.WriteAllTextAsync(@$"{_absolutePath}\\{utiltiesPath}\\BaseApiController.cs", SharedTemplates.BaseApiControllerTemplate.Replace("{project}", SolutionPrefix));
 
             Console.WriteLine("STEP: Generating web constants");
             await File.WriteAllTextAsync(@$"{_absolutePath}\\{utiltiesPath}\\{SolutionPrefix}WebConstants.cs", SharedTemplates.WebConstantsTemplate.Replace("{namespace}", utilitiesNamespace).Replace("{project}", SolutionPrefix).Replace("{new_id}", securityKey));
@@ -239,7 +227,6 @@ namespace ASP.NET.Core_Project_Builder
             await File.WriteAllTextAsync(@$"{_absolutePath}\\{helpersPath}\\EnumHelpers.cs", SharedTemplates.EnumHelpers.Replace("{namespace}", helpersNamespace));
 
             #endregion
-
 
             return;
         }
@@ -405,6 +392,7 @@ namespace ASP.NET.Core_Project_Builder
             }
 
             await File.WriteAllTextAsync($"{_absolutePath}\\{_serviceClientNamespace}\\AccountServiceClient.cs", ServiceClientTemplates.AccountServiceClientTemplate.Replace("{project}", SolutionPrefix));
+            await File.WriteAllTextAsync($"{_absolutePath}\\{_serviceClientNamespace}\\BaseServiceClient.cs", ServiceClientTemplates.BaseServiceClientTemplate.Replace("{project}", SolutionPrefix).Replace("{namespace}", _serviceClientNamespace));
 
             return;
         }
@@ -457,6 +445,10 @@ namespace ASP.NET.Core_Project_Builder
             }
 
             await File.WriteAllTextAsync($"{_absolutePath}\\{_repositoryNamespace}\\AccountRepository.cs", RepositoryTemplates.AccountRepositoryTemplate.Replace("{project}", SolutionPrefix));
+
+            Console.WriteLine("STEP: Generating base repository");
+            await File.WriteAllTextAsync(@$"{_absolutePath}\\{_repositoryNamespace}\\BaseRepository.cs", RepositoryTemplates.BaseRepositoryTemplate.Replace("{namespace}", _repositoryNamespace).Replace("{project}", SolutionPrefix));
+
         }
 
         public static async Task GenerateServiceProject()
@@ -499,6 +491,10 @@ namespace ASP.NET.Core_Project_Builder
             }
 
             await File.WriteAllTextAsync($"{_absolutePath}\\{_serviceNamespace}\\AccountService.cs", ServiceTemplates.AccountService.Replace("{project}", SolutionPrefix));
+
+            Console.WriteLine("STEP: Generating base service");
+            await File.WriteAllTextAsync(@$"{_absolutePath}\\{_serviceNamespace}\\BaseService.cs", ServiceTemplates.BaseServiceTemplate.Replace("{namespace}", _serviceNamespace).Replace("{project}", SolutionPrefix));
+
         }
 
         public static async Task GenerateWebProject()
@@ -700,6 +696,7 @@ namespace ASP.NET.Core_Project_Builder
             await File.WriteAllTextAsync($"{_absolutePath}\\{_apiNamespace}\\AccountController.cs", ApiTemplates.AccountControllerTemplate.Replace("{project}", SolutionPrefix));
             await File.WriteAllTextAsync($"{_absolutePath}\\{_apiNamespace}\\AppSettings.json", ApiTemplates.AppSettingsTemplate.Replace("{project}", SolutionPrefix));
             await File.WriteAllTextAsync($"{_absolutePath}\\{_apiNamespace}\\MappingProfiles\\UserMappingProfile.cs", ApiTemplates.UserMappingProfileTemplate.Replace("{project}", SolutionPrefix));
+            await File.WriteAllTextAsync($"{_absolutePath}\\{_apiNamespace}\\BaseApiController.cs", ApiTemplates.BaseApiControllerTemplate.Replace("{project}", SolutionPrefix));
 
             if (!GenerateHostUrl)
                 return;

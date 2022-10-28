@@ -13,7 +13,7 @@ namespace ASP.NET.Core_Project_Builder.Boilerplate
 @"using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using {project}.Shared.Utilities;
-using {project}.ServiceClients;
+using {project}.ServiceClient;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Newtonsoft.Json;
 
@@ -249,7 +249,7 @@ public class UserMappingProfile : Profile
 @"using AutoMapper;
 using {project}.Web.ViewModels.Account;
 using {project}.Domain.Models;
-using {project}.ServiceClients;
+using {project}.ServiceClient;
 using {project}.Shared;
 using {project}.Shared.Utilities;
 using Microsoft.AspNetCore.Mvc;
