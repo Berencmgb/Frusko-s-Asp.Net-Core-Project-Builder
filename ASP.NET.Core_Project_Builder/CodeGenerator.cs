@@ -176,9 +176,6 @@ namespace ASP.NET.Core_Project_Builder
 
             var securityKey = Guid.NewGuid().ToString();
 
-            Console.WriteLine("STEP: Generating shared db context");
-            await File.WriteAllTextAsync(@$"{_absolutePath}\\{utiltiesPath}\\SharedDbContext.cs", SharedTemplates.SharedDbContext.Replace("{namespace}", utilitiesNamespace).Replace("{project}", SolutionPrefix));
-
             Console.WriteLine("STEP: Generating http payload");
             await File.WriteAllTextAsync(@$"{_absolutePath}\\{utiltiesPath}\\HttpPayload.cs", SharedTemplates.HttpPayloadTemplate.Replace("{namespace}", utilitiesNamespace));
 

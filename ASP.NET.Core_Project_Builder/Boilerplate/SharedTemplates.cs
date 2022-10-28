@@ -96,40 +96,6 @@ namespace {namespace}
     }
 }";
 
-        public const string SharedDbContext =
-@"using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using {project}.Shared.Models;
-
-namespace {namespace}
-{
-
-    public class SharedDbContext : IdentityDbContext<User, IdentityRole<int>, int>
-    {
-        public SharedDbContext(DbContextOptions options) : base(options)
-        {
-        }
-
-        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-        {
-            foreach(var added in ChangeTracker.Entries<IBaseEntity>().Where(a => a.State == EntityState.Added))
-            {
-                if (!string.IsNullOrEmpty(added.Entity.Reference))
-                    continue;
-
-                added.Entity.Reference = Guid.NewGuid().ToString();
-            }
-
-            return base.SaveChangesAsync(cancellationToken);    
-        }
-    }
-}";
-
         public const string StringHelpersTemplate =
 @"using System;
 using System.Collections.Generic;

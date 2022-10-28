@@ -10,15 +10,30 @@ public static class EntityTemplates
 {
     public const string AppDbContext =
 @"using {project}.Shared.Utilities;
+using {project}.Shared.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
-namespace {namespace}
+namespace {project}.Entity;
+
+public class AppDbContext : IdentityDbContext<User, IdentityRole<int>, int>
 {
-    public class AppDbContext : SharedDbContext
+    public AppDbContext(DbContextOptions options) : base(options)
     {
-        public AppDbContext(DbContextOptions options) : base(options)
+    }
+
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        foreach(var added in ChangeTracker.Entries<IBaseEntity>().Where(a => a.State == EntityState.Added))
         {
+            if (!string.IsNullOrEmpty(added.Entity.Reference))
+                continue;
+
+            added.Entity.Reference = Guid.NewGuid().ToString();
         }
+
+        return base.SaveChangesAsync(cancellationToken);    
     }
 }";
 
@@ -26,26 +41,24 @@ namespace {namespace}
 @"using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
-namespace {project}.Entity
+namespace {project}.Entity;
+
+public static class Program
 {
-    public static class Program
+    public static void Main(string[] args)
     {
-        public static void Main(string[] args)
-        {
-        }
-    }
-    
-    
-    public class DbContextMigrationFactory : IDesignTimeDbContextFactory<AppDbContext>
-    {
-        public AppDbContext CreateDbContext(string[] args)
-        {
-            var builder = new DbContextOptionsBuilder<AppDbContext>();
-            builder.UseSqlServer(@""server=(localdb)\mssqllocaldb;database={project}Database;trusted_connection=yes;MultipleActiveResultSets=True"");
-            return new AppDbContext(builder.Options);
-        }
     }
 }
-
+    
+    
+public class DbContextMigrationFactory : IDesignTimeDbContextFactory<AppDbContext>
+{
+    public AppDbContext CreateDbContext(string[] args)
+    {
+        var builder = new DbContextOptionsBuilder<AppDbContext>();
+        builder.UseSqlServer(@""server=(localdb)\mssqllocaldb;database={project}Database;trusted_connection=yes;MultipleActiveResultSets=True"");
+        return new AppDbContext(builder.Options);
+    }
+}
 ";
 }
