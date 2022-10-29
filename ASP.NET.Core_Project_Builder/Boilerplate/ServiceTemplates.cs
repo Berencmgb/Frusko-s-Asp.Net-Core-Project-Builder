@@ -268,6 +268,7 @@ public interface IBaseService<TEntity> where TEntity : class, IBaseEntity
 
     public Task<Result<TEntity>> UpdateAsync(TEntity entity);
 
+    public IUnitOfWork UnitOfWork { get; }
 
 }";
 }
