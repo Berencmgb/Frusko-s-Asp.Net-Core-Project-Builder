@@ -445,6 +445,7 @@ namespace ASP.NET.Core_Project_Builder
 
             Console.WriteLine("STEP: Generating base repository");
             await File.WriteAllTextAsync(@$"{_absolutePath}\\{_repositoryNamespace}\\BaseRepository.cs", RepositoryTemplates.BaseRepositoryTemplate.Replace("{namespace}", _repositoryNamespace).Replace("{project}", SolutionPrefix));
+            await File.WriteAllTextAsync(@$"{_absolutePath}\\{_repositoryNamespace}\\UnitOfWork.cs", RepositoryTemplates.UnitOfWorkTemplate.Replace("{namespace}", _repositoryNamespace).Replace("{project}", SolutionPrefix));
 
         }
 

@@ -20,7 +20,7 @@ namespace {project}.Service;
 
 public class AccountService : BaseService<User, IAccountRepository>, IAccountService
 {
-    public AccountService(IAccountRepository repository) : base(repository)
+    public AccountService(IAccountRepository repository, IUnitOfWork unitOfWork) : base(repository, unitOfWork)
     {
     }
 }
@@ -45,11 +45,15 @@ namespace {namespace};
 
 public class BaseService<TEntity, TRepository> : IBaseService<TEntity> where TEntity : class, IBaseEntity where TRepository : IBaseRepository<TEntity>
 {
-    public TRepository Repository { get; set; }
+    private readonly IUnitOfWork _unitOfWork;
 
-    public BaseService(TRepository repository)
+    public TRepository Repository { get; set; }
+    public IUnitOfWork UnitOfWork { get => _unitOfWork; }
+
+    public BaseService(TRepository repository, IUnitOfWork unitOfWork)
     {
         Repository = repository;
+        _unitOfWork = unitOfWork;
     }
 
     #region GetAll
@@ -183,22 +187,38 @@ public class BaseService<TEntity, TRepository> : IBaseService<TEntity> where TEn
 
     public virtual async Task<Result> DeleteAsync(TEntity entity)
     {
-        return await Repository.DeleteAsync(entity);
+        var result = await Repository.DeleteAsync(entity);
+
+        await UnitOfWork.SaveChangesAsync();
+
+        return result;
     }
 
     public virtual async Task<Result<TEntity>> AddAsync(TEntity entity)
     {
-        return await Repository.InsertAsync(entity);
+        var result = await Repository.InsertAsync(entity);
+
+        await UnitOfWork.SaveChangesAsync();
+
+        return result;
     }
 
     public virtual async Task<Result<TEntity>> UpdateAsync(TEntity entity)
     {
-        return await Repository.UpdateAsync(entity);
+        var result = await Repository.UpdateAsync(entity);
+
+        await UnitOfWork.SaveChangesAsync();
+
+        return result;
     }
 
     public virtual async Task<Result> DeleteAsync(string reference)
     {
-        return await Repository.DeleteAsync(reference);
+        var result = await Repository.DeleteAsync(reference);
+
+        await UnitOfWork.SaveChangesAsync();
+
+        return result;
     }
 }
 
