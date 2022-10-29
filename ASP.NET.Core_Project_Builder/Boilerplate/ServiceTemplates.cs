@@ -18,7 +18,7 @@ using System.Threading.Tasks;
 
 namespace {project}.Service;
 
-public class AccountService : BaseService<User>, IAccountService
+public class AccountService : BaseService<User, IAccountRepository>, IAccountService
 {
     public AccountService(IAccountRepository repository) : base(repository)
     {
@@ -42,12 +42,12 @@ using {project}.Shared.Helpers;
 using {project}.Repository;
 
 namespace {namespace};
-public class BaseService<TEntity> : IBaseService<TEntity> where TEntity : class, IBaseEntity
+
+public class BaseService<TEntity, TRepository> : IBaseService<TEntity> where TEntity : class, IBaseEntity where TRepository : IBaseRepository<TEntity>
 {
-    public IBaseRepository<TEntity> Repository { get; set; }
+    public TRepository Repository { get; set; }
 
-
-    public BaseService(IBaseRepository<TEntity> repository)
+    public BaseService(TRepository repository)
     {
         Repository = repository;
     }

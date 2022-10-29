@@ -77,7 +77,7 @@ builder.Services.AddScoped(typeof(ITokenResolver), typeof(TokenResolver));
 builder.Services.AddScoped(typeof(IAccountRepository), typeof(AccountRepository));
 
 // Add Services
-builder.Services.AddScoped(typeof(IBaseService<>), typeof(BaseService<>));
+builder.Services.AddScoped(typeof(IBaseService<>), typeof(BaseService<,>));
 builder.Services.AddScoped(typeof(IAccountService), typeof(AccountService));
 
 builder.Services.AddIdentityCore<User>()
