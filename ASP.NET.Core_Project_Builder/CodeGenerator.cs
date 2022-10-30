@@ -1,6 +1,7 @@
 ﻿using ASP.NET.Core_Project_Builder.Boilerplate;
 using Microsoft.Build.Construction;
 using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
@@ -157,7 +158,6 @@ namespace ASP.NET.Core_Project_Builder
             await File.WriteAllTextAsync(@$"{_absolutePath}\\{modelsPath}\\Pagination.cs", SharedTemplates.PaginationTemplate.Replace("{namespace}", modelNamespace));
 
             Console.WriteLine("STEP: Generating user");
-            await File.WriteAllTextAsync(@$"{_absolutePath}\\{modelsPath}\\User.cs", SharedTemplates.UserTemplate.Replace("{namespace}", modelNamespace));
             await File.WriteAllTextAsync(@$"{_absolutePath}\\{modelsPath}\\CurrentUser.cs", SharedTemplates.CurrentUserTemplate.Replace("{namespace}", modelNamespace));
 
             #endregion
@@ -297,6 +297,7 @@ namespace ASP.NET.Core_Project_Builder
 
             Console.WriteLine("STEP: Generating program file");
             await File.WriteAllTextAsync(@$"{_absolutePath}\\{_entityNamespace}\\Program.cs", EntityTemplates.ProgramTemplate.Replace("{namespace}", entityNamespace).Replace("{project}", SolutionPrefix));
+            await File.WriteAllTextAsync(@$"{_absolutePath}\\{_entityNamespace}\\Models\\User.cs", EntityTemplates.UserTemplate.Replace("{project}", SolutionPrefix));
 
             return;
         }

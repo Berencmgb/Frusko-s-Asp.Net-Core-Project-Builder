@@ -14,6 +14,7 @@ using {project}.Shared.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using {project}.Entity.Models;
 
 namespace {project}.Entity;
 
@@ -59,6 +60,21 @@ public class DbContextMigrationFactory : IDesignTimeDbContextFactory<AppDbContex
         builder.UseSqlServer(@""server=(localdb)\mssqllocaldb;database={project}Database;trusted_connection=yes;MultipleActiveResultSets=True"");
         return new AppDbContext(builder.Options);
     }
+}
+";
+
+    public const string UserTemplate =
+@"using Microsoft.AspNetCore.Identity;
+using {project}.Shared.Models;
+
+namespace {project}.Entity.Models;
+
+public class User : IdentityUser<int>, IBaseEntity
+{
+    public string Reference { get; set; }
+    public bool IsDeleted { get; set; }
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
 }
 ";
 }

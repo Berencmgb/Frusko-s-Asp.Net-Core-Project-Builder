@@ -13,6 +13,7 @@ public static class RepositoryTemplates
 using {project}.Entity;
 using {project}.Shared.Models;
 using {project}.Shared.Utilities;
+using {project}.Entity.Models;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 

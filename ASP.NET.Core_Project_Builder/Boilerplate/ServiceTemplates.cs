@@ -13,6 +13,7 @@ public static class ServiceTemplates
 using {project}.Shared.Models;
 using {project}.Entity;
 using {project}.Repository;
+using {project}.Entity.Models;
 using System;
 using System.Threading.Tasks;
 

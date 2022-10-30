@@ -15,6 +15,7 @@ using {project}.Shared.Models;
 using {project}.Entity;
 using {project}.Service;
 using {project}.Repository;
+using {project}.Entity.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -135,6 +136,7 @@ using {project}.Shared.Models;
 using {project}.Domain.Models;
 using {project}.Shared.Utilities;
 using {project}.Shared.Helpers;
+using {project}.Entity.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -238,6 +240,7 @@ public class UserController : BaseApiController<User, UserDTO, IUserService, Use
 @"using AutoMapper;
 using {project}.Shared.Models;
 using {project}.Domain.Models;
+using {project}.Entity.Models;
 
 namespace {project}.Api.MappingProfiles;
 
