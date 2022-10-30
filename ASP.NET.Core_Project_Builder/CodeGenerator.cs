@@ -701,6 +701,9 @@ namespace ASP.NET.Core_Project_Builder
             await File.WriteAllTextAsync($"{_absolutePath}\\{_apiNamespace}\\MappingProfiles\\UserMappingProfile.cs", ApiTemplates.UserMappingProfileTemplate.Replace("{project}", SolutionPrefix));
             await File.WriteAllTextAsync($"{_absolutePath}\\{_apiNamespace}\\MappingProfiles\\UtilitiesMappingProfile.cs", ApiTemplates.UtilitiesMappingProfileTemplate.Replace("{project}", SolutionPrefix));
 
+            if (File.Exists($"{_absolutePath}\\{_apiNamespace}\\Controllers\\WeatherForecastController.cs"))
+                File.Delete($"{_absolutePath}\\{_apiNamespace}\\Controllers\\WeatherForecastController.cs");
+
             if (!GenerateHostUrl)
                 return;
 
