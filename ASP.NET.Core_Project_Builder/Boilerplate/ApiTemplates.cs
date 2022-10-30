@@ -75,10 +75,10 @@ builder.Services.AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork));
 
 
 // Add Repositories
-builder.Services.AddScoped(typeof(IAccountRepository), typeof(AccountRepository));
+builder.Services.AddScoped(typeof(IUserRepository), typeof(UserRepository));
 
 // Add Services
-builder.Services.AddScoped(typeof(IAccountService), typeof(AccountService));
+builder.Services.AddScoped(typeof(IUserService), typeof(UserService));
 
 builder.Services.AddIdentityCore<User>()
     .AddEntityFrameworkStores<AppDbContext>()
@@ -147,17 +147,17 @@ using System.Threading.Tasks;
 
 namespace {project}.Api.Controllers;
 
-[Route(""[controller]"")]
 [ApiController]
-public class AccountController : BaseApiController<User, UserDTO, IAccountService, AccountController>
+[Route(""[controller]"")]
+public class UserController : BaseApiController<User, UserDTO, IUserService, UserController>
 {
     private readonly ITokenResolver _tokenResolver;
     private readonly UserManager<User> _userManager;
 
 
-    public AccountController(IAccountService service,
+    public UserController(IUserService service,
             IMapper mapper,
-            ILogger<AccountController> logger,
+            ILogger<UserController> logger,
             ITokenResolver tokenResolver,
             UserManager<User> userManager)
             : base(service,

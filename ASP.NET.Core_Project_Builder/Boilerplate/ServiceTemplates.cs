@@ -18,14 +18,14 @@ using System.Threading.Tasks;
 
 namespace {project}.Service;
 
-public class AccountService : BaseService<User, IAccountRepository>, IAccountService
+public class UserService : BaseService<User, IUserRepository>, IUserService
 {
-    public AccountService(IAccountRepository repository, IUnitOfWork unitOfWork) : base(repository, unitOfWork)
+    public UserService(IUserRepository repository, IUnitOfWork unitOfWork) : base(repository, unitOfWork)
     {
     }
 }
 
-public interface IAccountService : IBaseService<User>
+public interface IUserService : IBaseService<User>
 {
 
 }

@@ -32,7 +32,7 @@ builder.Services.AddControllers().AddNewtonsoftJson(o =>
 builder.Services.AddScoped(typeof(IIdentityResolver), typeof(IdentityResolver));
 builder.Services.AddScoped(typeof(ITokenResolver), typeof(TokenResolver));
 builder.Services.AddScoped(typeof(IBaseServiceClient<>), typeof(BaseServiceClient<>));
-builder.Services.AddScoped(typeof(IAccountServiceClient), typeof(AccountServiceClient));
+builder.Services.AddScoped(typeof(IUserServiceClient), typeof(UserServiceClient));
 
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 
@@ -186,7 +186,7 @@ public class BaseController : Controller
         public const string CreateUserViewModelTemplate =
 @"using System.ComponentModel.DataAnnotations;
 
-namespace {project}.Web.ViewModels.Account;
+namespace {project}.Web.ViewModels.User;
 
 public class CreateUserViewModel
 {
@@ -215,7 +215,7 @@ public class CreateUserViewModel
 ";
 
         public const string UserViewModelTemplate =
-@"namespace {project}.Web.ViewModels.Account;
+@"namespace {project}.Web.ViewModels.User;
 
 public class UserViewModel
 {
@@ -229,7 +229,7 @@ public class UserViewModel
 
         public const string UserMappingProfileTemplate =
 @"using AutoMapper;
-using {project}.Web.ViewModels.Account;
+using {project}.Web.ViewModels.User;
 using {project}.Domain.Models;
 
 namespace {project}.Web.MappingProfiles;
@@ -247,7 +247,6 @@ public class UserMappingProfile : Profile
 
         public const string AccountControllerTemplate =
 @"using AutoMapper;
-using {project}.Web.ViewModels.Account;
 using {project}.Domain.Models;
 using {project}.ServiceClient;
 using {project}.Shared;
@@ -258,40 +257,41 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using {project}.Web.ViewModels.User;
 
 namespace {project}.Web.Controllers;
 
-public class AccountController : BaseController
+public class UserController : BaseController
 {
-    private readonly IAccountServiceClient _accountServiceClient;
+    private readonly IUserServiceClient _userServiceClient;
     private readonly IIdentityResolver _identityResolver;
 
-    public AccountController(IMapper mapper,
+    public UserController(IMapper mapper,
         ITokenResolver tokenResolver,
-        IAccountServiceClient accountServiceClient,
+        IUserServiceClient userServiceClient,
         IIdentityResolver identityResolver)
         : base(mapper,
             tokenResolver)
     {
-        _accountServiceClient = accountServiceClient;
+        _userServiceClient = userServiceClient;
         _identityResolver = identityResolver;
     }
 
-    [HttpGet(""Account/Register"")]
+    [HttpGet(""User/Register"")]
     public async Task<IActionResult> Register()
     {
         var viewModel = new CreateUserViewModel {  };
         return View(viewModel);
     }
 
-    [HttpPost(""Account/Register"")]
+    [HttpPost(""User/Register"")]
     public async Task<IActionResult> Register(CreateUserViewModel viewModel)
     {
         var payload = await GetPayload();
 
         var userDTO = _mapper.Map<UserDTO>(viewModel);
 
-        var result = await _accountServiceClient.RegisterAsync(payload, userDTO);
+        var result = await _userServiceClient.RegisterAsync(payload, userDTO);
 
         var token = new JwtSecurityTokenHandler().ReadJwtToken(result.Value);
 
@@ -302,21 +302,21 @@ public class AccountController : BaseController
         return RedirectToAction(""index"", ""home"");
     }
 
-    [HttpGet(""Account/Login"")]
+    [HttpGet(""User/Login"")]
     public async Task<IActionResult> Login()
     {
         var viewModel = new CreateUserViewModel {  };
         return View(viewModel);
     }
 
-    [HttpPost(""Account/Login"")]
+    [HttpPost(""User/Login"")]
     public async Task<IActionResult> Login(UserViewModel viewModel)
     {
         var payload = await GetPayload();
 
         var userDTO = _mapper.Map<UserDTO>(viewModel);
 
-        var result = await _accountServiceClient.LoginAsync(payload, userDTO);
+        var result = await _userServiceClient.LoginAsync(payload, userDTO);
 
         var token = new JwtSecurityTokenHandler().ReadJwtToken(result.Value);
 
@@ -331,12 +331,12 @@ public class AccountController : BaseController
 ";
 
         public const string RegisterHtmlTemplate =
-@"@using {project}.Web.ViewModels.Account
+@"@using {project}.Web.ViewModels.User
 
 @model CreateUserViewModel;
 
 
-<form asp-action=""Register"" asp-controller=""Account"">
+<form asp-action=""Register"" asp-controller=""User"">
     <input asp-for=""Email"" placeholder=""Email"" />
     <input asp-for=""FirstName"" placeholder=""FirstName"" />
     <input asp-for=""LastName"" placeholder=""LastName"" />
@@ -359,11 +359,11 @@ public class BaseViewModel
 ";
 
         public const string LoginHtmlTemplate =
-@"@using {project}.Web.ViewModels.Account
+@"@using {project}.Web.ViewModels.User
 
 @model UserViewModel;
 
-<form asp-action=""Register"" asp-controller=""Account"">
+<form asp-action=""Register"" asp-controller=""User"">
     <input asp-for=""Username"" placeholder=""Username"" />
     <input asp-for=""Password"" type=""password"" placeholder=""Password"" />
     <button type=""submit"">Login</button>

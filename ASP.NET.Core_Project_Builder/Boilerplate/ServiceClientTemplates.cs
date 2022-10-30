@@ -21,9 +21,9 @@ using System.Threading.Tasks;
 
 namespace {project}.ServiceClient;
 
-public class AccountServiceClient : BaseServiceClient<UserDTO>, IAccountServiceClient
+public class UserServiceClient : BaseServiceClient<UserDTO>, IUserServiceClient
 {
-    public AccountServiceClient(IHttpClientFactory httpClientFactory) : base(httpClientFactory)
+    public UserServiceClient(IHttpClientFactory httpClientFactory) : base(httpClientFactory)
     {
     }
 
@@ -58,7 +58,7 @@ public class AccountServiceClient : BaseServiceClient<UserDTO>, IAccountServiceC
     protected new string AdaptiveUrl { get => ""Account""; }
 }
 
-public interface IAccountServiceClient : IBaseServiceClient<UserDTO>
+public interface IUserServiceClient : IBaseServiceClient<UserDTO>
 {
     public Task<Result<string>> RegisterAsync(HttpPayload payload, UserDTO dto);
     public Task<Result<string>> LoginAsync(HttpPayload payload, UserDTO dto);

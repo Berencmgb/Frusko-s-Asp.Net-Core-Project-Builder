@@ -18,10 +18,10 @@ using System.Threading.Tasks;
 
 namespace {project}.Repository;
 
-public class AccountRepository : BaseRepository<User, IAccountRepository>, IAccountRepository
+public class UserRepository : BaseRepository<User, IUserRepository>, IUserRepository
 {
-    public AccountRepository(AppDbContext context,
-        ILogger<AccountRepository> logger,
+    public UserRepository(AppDbContext context,
+        ILogger<UserRepository> logger,
         IMapper mapper)
         : base(context,
               logger,
@@ -30,7 +30,7 @@ public class AccountRepository : BaseRepository<User, IAccountRepository>, IAcco
     }
 }
 
-public interface IAccountRepository : IBaseRepository<User>
+public interface IUserRepository : IBaseRepository<User>
 {
 
 }

@@ -584,11 +584,11 @@ namespace ASP.NET.Core_Project_Builder
             if (!Directory.Exists($"{_absolutePath}\\{_webNamespace}\\Views"))
                 Directory.CreateDirectory($"{_absolutePath}\\{_webNamespace}\\Views");
 
-            if (!Directory.Exists($"{_absolutePath}\\{_webNamespace}\\Views\\Account"))
-                Directory.CreateDirectory($"{_absolutePath}\\{_webNamespace}\\Views\\Account");
+            if (!Directory.Exists($"{_absolutePath}\\{_webNamespace}\\Views\\User"))
+                Directory.CreateDirectory($"{_absolutePath}\\{_webNamespace}\\Views\\User");
 
-            if (!Directory.Exists($"{_absolutePath}\\{_webNamespace}\\ViewModels\\Account"))
-                Directory.CreateDirectory($"{_absolutePath}\\{_webNamespace}\\ViewModels\\Account");
+            if (!Directory.Exists($"{_absolutePath}\\{_webNamespace}\\ViewModels\\User"))
+                Directory.CreateDirectory($"{_absolutePath}\\{_webNamespace}\\ViewModels\\User");
 
             if (!Directory.Exists($"{_absolutePath}\\{_webNamespace}\\MappingProfiles"))
                 Directory.CreateDirectory($"{_absolutePath}\\{_webNamespace}\\MappingProfiles");
@@ -600,13 +600,13 @@ namespace ASP.NET.Core_Project_Builder
             await File.WriteAllTextAsync($"{_absolutePath}\\{_webNamespace}\\Styles\\Main.scss", WebTemplates.SiteCssTemplate);
             await File.WriteAllTextAsync($"{_absolutePath}\\{_webNamespace}\\Views\\Shared\\_Layout.cshtml", WebTemplates.LayoutTemplate.Replace("{project}", SolutionPrefix).Replace("{project_lower}", SolutionPrefix.ToLower()));
             await File.WriteAllTextAsync($"{_absolutePath}\\{_webNamespace}\\ViewModels\\BaseViewModel.cs", WebTemplates.BaseViewModelTemplate.Replace("{project}", SolutionPrefix));
-            await File.WriteAllTextAsync($"{_absolutePath}\\{_webNamespace}\\ViewModels\\Account\\CreateUserViewModel.cs", WebTemplates.CreateUserViewModelTemplate.Replace("{project}", SolutionPrefix));
-            await File.WriteAllTextAsync($"{_absolutePath}\\{_webNamespace}\\ViewModels\\Account\\UserViewModel.cs", WebTemplates.UserViewModelTemplate.Replace("{project}", SolutionPrefix));
+            await File.WriteAllTextAsync($"{_absolutePath}\\{_webNamespace}\\ViewModels\\User\\CreateUserViewModel.cs", WebTemplates.CreateUserViewModelTemplate.Replace("{project}", SolutionPrefix));
+            await File.WriteAllTextAsync($"{_absolutePath}\\{_webNamespace}\\ViewModels\\User\\UserViewModel.cs", WebTemplates.UserViewModelTemplate.Replace("{project}", SolutionPrefix));
             await File.WriteAllTextAsync($"{_absolutePath}\\{_webNamespace}\\MappingProfiles\\UserMappingProfile.cs", WebTemplates.UserMappingProfileTemplate.Replace("{project}", SolutionPrefix));
             await File.WriteAllTextAsync($"{_absolutePath}\\{_webNamespace}\\Controllers\\BaseController.cs", WebTemplates.BaseControllerTemplate.Replace("{project}", SolutionPrefix));
             await File.WriteAllTextAsync($"{_absolutePath}\\{_webNamespace}\\Controllers\\AccountController.cs", WebTemplates.AccountControllerTemplate.Replace("{project}", SolutionPrefix));
-            await File.WriteAllTextAsync($"{_absolutePath}\\{_webNamespace}\\Views\\Account\\Register.cshtml", WebTemplates.RegisterHtmlTemplate.Replace("{project}", SolutionPrefix));
-            await File.WriteAllTextAsync($"{_absolutePath}\\{_webNamespace}\\Views\\Account\\Login.cshtml", WebTemplates.LoginHtmlTemplate.Replace("{project}", SolutionPrefix));
+            await File.WriteAllTextAsync($"{_absolutePath}\\{_webNamespace}\\Views\\User\\Register.cshtml", WebTemplates.RegisterHtmlTemplate.Replace("{project}", SolutionPrefix));
+            await File.WriteAllTextAsync($"{_absolutePath}\\{_webNamespace}\\Views\\User\\Login.cshtml", WebTemplates.LoginHtmlTemplate.Replace("{project}", SolutionPrefix));
 
             return;
         }
