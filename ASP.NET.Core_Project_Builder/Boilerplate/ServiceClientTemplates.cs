@@ -54,8 +54,6 @@ public class UserServiceClient : BaseServiceClient<UserDTO>, IUserServiceClient
 
         return JsonConvert.DeserializeObject<Result<string>>(json);
     }
-
-    protected new string AdaptiveUrl { get => ""Account""; }
 }
 
 public interface IUserServiceClient : IBaseServiceClient<UserDTO>
@@ -339,6 +337,9 @@ public class BaseServiceClient<TDto> : IBaseServiceClient<TDto> where TDto : Bas
     {
         get
         {
+            if(typeof(TDto) == typeof(UserDTO))
+                return ""User"";
+
             return """";
         }
     }
