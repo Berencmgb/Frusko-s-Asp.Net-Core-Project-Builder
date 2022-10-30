@@ -430,4 +430,19 @@ public class BaseApiController<TEntity, TDto, TService, TController> : Controlle
 
 ";
 
+    public const string UtilitiesMappingProfileTemplate =
+@"using AutoMapper;
+using {project}.Shared.Models;
+
+namespace {project}.Api.MappingProfiles;
+
+public class UtilitiesMappingProfile : Profile
+{
+	public UtilitiesMappingProfile()
+	{
+		CreateMap(typeof(Result<>), typeof(Result<>));
+	}
+}
+";
+
 }

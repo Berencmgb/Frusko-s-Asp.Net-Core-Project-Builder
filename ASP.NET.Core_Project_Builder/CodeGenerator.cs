@@ -694,6 +694,7 @@ namespace ASP.NET.Core_Project_Builder
             await File.WriteAllTextAsync($"{_absolutePath}\\{_apiNamespace}\\AccountController.cs", ApiTemplates.AccountControllerTemplate.Replace("{project}", SolutionPrefix));
             await File.WriteAllTextAsync($"{_absolutePath}\\{_apiNamespace}\\AppSettings.json", ApiTemplates.AppSettingsTemplate.Replace("{project}", SolutionPrefix));
             await File.WriteAllTextAsync($"{_absolutePath}\\{_apiNamespace}\\MappingProfiles\\UserMappingProfile.cs", ApiTemplates.UserMappingProfileTemplate.Replace("{project}", SolutionPrefix));
+            await File.WriteAllTextAsync($"{_absolutePath}\\{_apiNamespace}\\MappingProfiles\\UtilitiesMappingProfile.cs", ApiTemplates.UtilitiesMappingProfileTemplate.Replace("{project}", SolutionPrefix));
             await File.WriteAllTextAsync($"{_absolutePath}\\{_apiNamespace}\\BaseApiController.cs", ApiTemplates.BaseApiControllerTemplate.Replace("{project}", SolutionPrefix));
 
             if (!GenerateHostUrl)
