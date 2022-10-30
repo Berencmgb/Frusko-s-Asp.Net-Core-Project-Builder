@@ -168,7 +168,7 @@ public class UserController : BaseApiController<User, UserDTO, IUserService, Use
 
 
     [HttpPost(""Register"")]
-    public async Task<IActionResult> Register([FromBody] UserDTO userDTO)
+    public async Task<IActionResult> Register([FromBody] RegisterUserDTO userDTO)
     {
         if(string.IsNullOrWhiteSpace(userDTO.Password) || string.IsNullOrWhiteSpace(userDTO.Password))
             return Ok(new Result<string> { Success = false, Message = ""No valid password submitted."" });
@@ -202,7 +202,7 @@ public class UserController : BaseApiController<User, UserDTO, IUserService, Use
     }
 
     [HttpPost(""Login"")]
-    public async Task<IActionResult> Login([FromBody] UserDTO userDTO)
+    public async Task<IActionResult> Login([FromBody] LoginUserDTO userDTO)
     {
         var result = new Result<string> { };
 
@@ -246,6 +246,9 @@ public class UserMappingProfile : Profile
     public UserMappingProfile()
     {
         CreateMap<User, UserDTO>().ReverseMap();
+
+        CreateMap<RegisterUserDTO, User>();
+        CreateMap<LoginUserDTO, User>();
     }
 }
 

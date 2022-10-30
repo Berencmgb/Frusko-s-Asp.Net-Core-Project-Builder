@@ -28,7 +28,7 @@ public class UserServiceClient : BaseServiceClient<UserDTO>, IUserServiceClient
     {
     }
 
-    public async Task<Result<string>> RegisterAsync(HttpPayload payload, UserDTO dto)
+    public async Task<Result<string>> RegisterAsync(HttpPayload payload, RegisterUserDTO dto)
     {
         var client = await GetClient(payload);
 
@@ -42,7 +42,7 @@ public class UserServiceClient : BaseServiceClient<UserDTO>, IUserServiceClient
         return JsonConvert.DeserializeObject<Result<string>>(json);
     }
 
-    public async Task<Result<string>> LoginAsync(HttpPayload payload, UserDTO dto)
+    public async Task<Result<string>> LoginAsync(HttpPayload payload, LoginUserDTO dto)
     {
         var client = await GetClient(payload);
 
@@ -59,8 +59,8 @@ public class UserServiceClient : BaseServiceClient<UserDTO>, IUserServiceClient
 
 public interface IUserServiceClient : IBaseServiceClient<UserDTO>
 {
-    public Task<Result<string>> RegisterAsync(HttpPayload payload, UserDTO dto);
-    public Task<Result<string>> LoginAsync(HttpPayload payload, UserDTO dto);
+    public Task<Result<string>> RegisterAsync(HttpPayload payload, RegisterUserDTO dto);
+    public Task<Result<string>> LoginAsync(HttpPayload payload, LoginUserDTO dto);
 }
 ";
 
@@ -77,6 +77,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using {project}.Shared.Utilities;
+using {project}.Domain.Models;
 
 namespace {namespace};
 

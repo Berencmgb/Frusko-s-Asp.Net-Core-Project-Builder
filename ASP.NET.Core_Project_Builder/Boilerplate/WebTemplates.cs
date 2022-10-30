@@ -238,7 +238,8 @@ public class UserMappingProfile : Profile
 {
     public UserMappingProfile()
     {
-        CreateMap<CreateUserViewModel, UserDTO>().ReverseMap();
+        CreateMap<RegisterUserViewModel, RegisterUserDTO>().ReverseMap();
+        CreateMap<LoginUserViewModel, LoginUserDTO>().ReverseMap();
         CreateMap<UserViewModel, UserDTO>().ReverseMap();
     }
 }
@@ -280,16 +281,16 @@ public class UserController : BaseController
     [HttpGet(""User/Register"")]
     public async Task<IActionResult> Register()
     {
-        var viewModel = new CreateUserViewModel {  };
+        var viewModel = new RegisterUserViewModel {  };
         return View(viewModel);
     }
 
     [HttpPost(""User/Register"")]
-    public async Task<IActionResult> Register(CreateUserViewModel viewModel)
+    public async Task<IActionResult> Register(RegisterUserViewModel viewModel)
     {
         var payload = await GetPayload();
 
-        var userDTO = _mapper.Map<UserDTO>(viewModel);
+        var userDTO = _mapper.Map<RegisterUserDTO>(viewModel);
 
         var result = await _userServiceClient.RegisterAsync(payload, userDTO);
 
@@ -305,16 +306,16 @@ public class UserController : BaseController
     [HttpGet(""User/Login"")]
     public async Task<IActionResult> Login()
     {
-        var viewModel = new CreateUserViewModel {  };
+        var viewModel = new LoginUserViewModel {  };
         return View(viewModel);
     }
 
     [HttpPost(""User/Login"")]
-    public async Task<IActionResult> Login(UserViewModel viewModel)
+    public async Task<IActionResult> Login(LoginUserViewModel viewModel)
     {
         var payload = await GetPayload();
 
-        var userDTO = _mapper.Map<UserDTO>(viewModel);
+        var userDTO = _mapper.Map<LoginUserDTO>(viewModel);
 
         var result = await _userServiceClient.LoginAsync(payload, userDTO);
 
@@ -333,7 +334,7 @@ public class UserController : BaseController
         public const string RegisterHtmlTemplate =
 @"@using {project}.Web.ViewModels.User
 
-@model CreateUserViewModel;
+@model RegisterUserViewModel;
 
 
 <form asp-action=""Register"" asp-controller=""User"">
@@ -361,9 +362,9 @@ public class BaseViewModel
         public const string LoginHtmlTemplate =
 @"@using {project}.Web.ViewModels.User
 
-@model UserViewModel;
+@model LoginUserViewModel;
 
-<form asp-action=""Register"" asp-controller=""User"">
+<form asp-action=""Login"" asp-controller=""User"">
     <input asp-for=""Username"" placeholder=""Username"" />
     <input asp-for=""Password"" type=""password"" placeholder=""Password"" />
     <button type=""submit"">Login</button>
@@ -459,6 +460,51 @@ body {
   margin-bottom: 60px;
 }
 ";
+
+        public const string RegisterUserViewModelTemplate =
+@"using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+
+namespace {project}.Web.ViewModels.User;
+public class RegisterUserViewModel
+{
+    [Required]
+    [EmailAddress]
+    [Display(Name = ""Email"")]
+    public string Email { get; set; }
+
+    [Required]
+    public string FirstName { get; set; }
+
+    [Required]
+    public string LastName { get; set; }
+
+    [Required]
+    public string Username { get; set; }
+
+    [Required]
+    [DataType(DataType.Password)]
+    public string Password { get; set; }
+
+    [Required]
+    [Compare(""Password"", ErrorMessage = ""The password and confirmation password do not match."")]
+    public string ConfirmPassword { get; set; }
+}";
+
+        public const string LoginUserViewModelTemplate =
+@"using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace {project}.Web.ViewModels.User;
+public class LoginUserViewModel
+{
+    public string Username { get; set; }
+    public string Password { get; set; }
+}";
 
     }
 

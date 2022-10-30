@@ -337,6 +337,8 @@ namespace ASP.NET.Core_Project_Builder
             }
 
             await File.WriteAllTextAsync($"{_absolutePath}\\{_domainNamespace}\\Models\\UserDTO.cs", DomainTemplates.UserDTOTemplate.Replace("{project}", SolutionPrefix));
+            await File.WriteAllTextAsync($"{_absolutePath}\\{_domainNamespace}\\Models\\RegisterUserDTO.cs", DomainTemplates.RegisterUserDTOTemplate.Replace("{project}", SolutionPrefix));
+            await File.WriteAllTextAsync($"{_absolutePath}\\{_domainNamespace}\\Models\\LoginUserDTO.cs", DomainTemplates.LoginUserDTOTemplate.Replace("{project}", SolutionPrefix));
 
             return;
         }
@@ -602,6 +604,8 @@ namespace ASP.NET.Core_Project_Builder
             await File.WriteAllTextAsync($"{_absolutePath}\\{_webNamespace}\\ViewModels\\BaseViewModel.cs", WebTemplates.BaseViewModelTemplate.Replace("{project}", SolutionPrefix));
             await File.WriteAllTextAsync($"{_absolutePath}\\{_webNamespace}\\ViewModels\\User\\CreateUserViewModel.cs", WebTemplates.CreateUserViewModelTemplate.Replace("{project}", SolutionPrefix));
             await File.WriteAllTextAsync($"{_absolutePath}\\{_webNamespace}\\ViewModels\\User\\UserViewModel.cs", WebTemplates.UserViewModelTemplate.Replace("{project}", SolutionPrefix));
+            await File.WriteAllTextAsync($"{_absolutePath}\\{_webNamespace}\\ViewModels\\User\\RegisterUserViewModel.cs", WebTemplates.RegisterUserViewModelTemplate.Replace("{project}", SolutionPrefix));
+            await File.WriteAllTextAsync($"{_absolutePath}\\{_webNamespace}\\ViewModels\\User\\LoginUserViewModel.cs", WebTemplates.LoginUserViewModelTemplate.Replace("{project}", SolutionPrefix));
             await File.WriteAllTextAsync($"{_absolutePath}\\{_webNamespace}\\MappingProfiles\\UserMappingProfile.cs", WebTemplates.UserMappingProfileTemplate.Replace("{project}", SolutionPrefix));
             await File.WriteAllTextAsync($"{_absolutePath}\\{_webNamespace}\\Controllers\\BaseController.cs", WebTemplates.BaseControllerTemplate.Replace("{project}", SolutionPrefix));
             await File.WriteAllTextAsync($"{_absolutePath}\\{_webNamespace}\\Controllers\\AccountController.cs", WebTemplates.AccountControllerTemplate.Replace("{project}", SolutionPrefix));
@@ -691,11 +695,11 @@ namespace ASP.NET.Core_Project_Builder
                 Directory.CreateDirectory($"{_absolutePath}\\{_apiNamespace}\\MappingProfiles");
 
             await File.WriteAllTextAsync($"{_absolutePath}\\{_apiNamespace}\\Program.cs", ApiTemplates.ProgramTemplate.Replace("{project}", SolutionPrefix));
-            await File.WriteAllTextAsync($"{_absolutePath}\\{_apiNamespace}\\AccountController.cs", ApiTemplates.AccountControllerTemplate.Replace("{project}", SolutionPrefix));
+            await File.WriteAllTextAsync($"{_absolutePath}\\{_apiNamespace}\\Controllers\\BaseApiController.cs", ApiTemplates.BaseApiControllerTemplate.Replace("{project}", SolutionPrefix));
+            await File.WriteAllTextAsync($"{_absolutePath}\\{_apiNamespace}\\Controllers\\AccountController.cs", ApiTemplates.AccountControllerTemplate.Replace("{project}", SolutionPrefix));
             await File.WriteAllTextAsync($"{_absolutePath}\\{_apiNamespace}\\AppSettings.json", ApiTemplates.AppSettingsTemplate.Replace("{project}", SolutionPrefix));
             await File.WriteAllTextAsync($"{_absolutePath}\\{_apiNamespace}\\MappingProfiles\\UserMappingProfile.cs", ApiTemplates.UserMappingProfileTemplate.Replace("{project}", SolutionPrefix));
             await File.WriteAllTextAsync($"{_absolutePath}\\{_apiNamespace}\\MappingProfiles\\UtilitiesMappingProfile.cs", ApiTemplates.UtilitiesMappingProfileTemplate.Replace("{project}", SolutionPrefix));
-            await File.WriteAllTextAsync($"{_absolutePath}\\{_apiNamespace}\\BaseApiController.cs", ApiTemplates.BaseApiControllerTemplate.Replace("{project}", SolutionPrefix));
 
             if (!GenerateHostUrl)
                 return;
