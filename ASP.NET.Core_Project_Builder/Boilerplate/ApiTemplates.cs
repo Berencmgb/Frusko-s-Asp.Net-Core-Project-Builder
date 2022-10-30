@@ -70,6 +70,7 @@ builder.Services.AddDbContext<AppDbContext>(c => c.UseSqlServer(builder.Configur
 
 builder.Services.AddScoped(typeof(IIdentityResolver), typeof(IdentityResolver));
 builder.Services.AddScoped(typeof(ITokenResolver), typeof(TokenResolver));
+builder.Services.AddScoped(typeof(IPayloadResolver), typeof(PayloadResolver));
 builder.Services.AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork));
 
 

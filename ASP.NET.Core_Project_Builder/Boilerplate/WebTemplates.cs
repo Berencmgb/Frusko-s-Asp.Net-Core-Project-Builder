@@ -31,6 +31,7 @@ builder.Services.AddControllers().AddNewtonsoftJson(o =>
 // Service Client List
 builder.Services.AddScoped(typeof(IIdentityResolver), typeof(IdentityResolver));
 builder.Services.AddScoped(typeof(ITokenResolver), typeof(TokenResolver));
+builder.Services.AddScoped(typeof(IPayloadResolver), typeof(PayloadResolver));
 builder.Services.AddScoped(typeof(IBaseServiceClient<>), typeof(BaseServiceClient<>));
 builder.Services.AddScoped(typeof(IUserServiceClient), typeof(UserServiceClient));
 
@@ -165,20 +166,15 @@ public class BaseController : Controller
 {
     protected readonly IMapper _mapper;
     protected readonly ITokenResolver _tokenResolver;
+    protected readonly IPayloadResolver _payloadResolver;
 
-    public BaseController(IMapper mapper, ITokenResolver tokenResolver)
+    public BaseController(IMapper mapper,
+        ITokenResolver tokenResolver,
+        IPayloadResolver payloadResolver)
     {
         _mapper = mapper;
         _tokenResolver = tokenResolver;
-    }
-
-    protected async Task<HttpPayload> GetPayload()
-    {
-        return new HttpPayload
-        {
-            SecurityToken = await _tokenResolver.GetTokenAsync(null),
-            Uri = {project}ApiConstants.HostUrl
-        };
+        _payloadResolver = payloadResolver;
     }
 }
 ";
@@ -269,10 +265,12 @@ public class UserController : BaseController
 
     public UserController(IMapper mapper,
         ITokenResolver tokenResolver,
+        IPayloadResolver payloadResolver,
         IUserServiceClient userServiceClient,
         IIdentityResolver identityResolver)
         : base(mapper,
-            tokenResolver)
+            tokenResolver,
+            payloadResolver)
     {
         _userServiceClient = userServiceClient;
         _identityResolver = identityResolver;
@@ -288,7 +286,7 @@ public class UserController : BaseController
     [HttpPost(""User/Register"")]
     public async Task<IActionResult> Register(RegisterUserViewModel viewModel)
     {
-        var payload = await GetPayload();
+        var payload = await _payloadResolver.GetPayloadAsync();
 
         var userDTO = _mapper.Map<RegisterUserDTO>(viewModel);
 
@@ -313,7 +311,7 @@ public class UserController : BaseController
     [HttpPost(""User/Login"")]
     public async Task<IActionResult> Login(LoginUserViewModel viewModel)
     {
-        var payload = await GetPayload();
+        var payload = await _payloadResolver.GetPayloadAsync();
 
         var userDTO = _mapper.Map<LoginUserDTO>(viewModel);
 

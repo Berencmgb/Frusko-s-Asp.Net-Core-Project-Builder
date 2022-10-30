@@ -185,6 +185,9 @@ namespace ASP.NET.Core_Project_Builder
             Console.WriteLine("STEP: Generating token resolver");
             await File.WriteAllTextAsync(@$"{_absolutePath}\\{utiltiesPath}\\TokenResolver.cs", SharedTemplates.TokenResolverTemplate.Replace("{namespace}", utilitiesNamespace).Replace("{project}", SolutionPrefix));
 
+            Console.WriteLine("STEP: Generating payload resolver");
+            await File.WriteAllTextAsync(@$"{_absolutePath}\\{utiltiesPath}\\PayloadResolver.cs", SharedTemplates.PayloadResolverTemplate.Replace("{namespace}", utilitiesNamespace).Replace("{project}", SolutionPrefix));
+
             Console.WriteLine("STEP: Generating identity resolver");
             await File.WriteAllTextAsync(@$"{_absolutePath}\\{utiltiesPath}\\IdentityResolver.cs", SharedTemplates.IdentityResolverTemplate.Replace("{namespace}", utilitiesNamespace).Replace("{project}", SolutionPrefix));
 
