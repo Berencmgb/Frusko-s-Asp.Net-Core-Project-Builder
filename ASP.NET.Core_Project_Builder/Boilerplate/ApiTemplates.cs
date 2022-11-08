@@ -327,6 +327,9 @@ public class BaseApiController<TEntity, TDto, TService, TController> : Controlle
 
         try
         {
+            if (!string.IsNullOrWhiteSpace(body.Expression))
+                body.Expression = StringHelper.GenerateExpression(body.Expression);
+
             if (!string.IsNullOrEmpty(body.Expression) && body.Includes.Count > 0 && body.Pagination != null)
             {
                 var includes = StringHelper.GenerateIncludes(body.Includes);
@@ -361,6 +364,9 @@ public class BaseApiController<TEntity, TDto, TService, TController> : Controlle
         TEntity entity = null;
         try
         {
+            if (!string.IsNullOrWhiteSpace(body.Expression))
+                body.Expression = StringHelper.GenerateExpression(body.Expression);
+
             if (!string.IsNullOrWhiteSpace(body.Expression) && body.Includes.Count > 0)
             {
                 var includes = StringHelper.GenerateIncludes(body.Includes);
