@@ -708,6 +708,9 @@ namespace ASP.NET.Core_Project_Builder
             if (File.Exists($"{_absolutePath}\\{_apiNamespace}\\Controllers\\WeatherForecastController.cs"))
                 File.Delete($"{_absolutePath}\\{_apiNamespace}\\Controllers\\WeatherForecastController.cs");
 
+            if (File.Exists($"{_absolutePath}\\{_apiNamespace}\\WeatherForecast.cs"))
+                File.Delete($"{_absolutePath}\\{_apiNamespace}\\WeatherForecast.cs");
+
             if (!GenerateHostUrl)
                 return;
 
