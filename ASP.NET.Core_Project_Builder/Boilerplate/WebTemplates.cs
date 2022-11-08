@@ -325,7 +325,14 @@ public class UserController : BaseController
 
         return RedirectToAction(""index"", ""home"");
     }
-    
+
+    [HttpPost(""User/Logout"")]
+    public async Task<IActionResult> Logout()
+    {
+        await HttpContext.SignOutAsync();
+
+        return RedirectToAction(""index"", ""home"");
+    }    
 }
 ";
 
