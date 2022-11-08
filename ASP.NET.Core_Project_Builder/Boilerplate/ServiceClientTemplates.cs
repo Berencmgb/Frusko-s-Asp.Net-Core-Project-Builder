@@ -30,7 +30,7 @@ public class UserServiceClient : BaseServiceClient<UserDTO>, IUserServiceClient
 
     public async Task<Result<string>> RegisterAsync(HttpPayload payload, RegisterUserDTO dto)
     {
-        var client = await GetClient(payload);
+        var client = await GetClientAsync(payload);
 
         var postbody = JsonConvert.SerializeObject(dto);
 
@@ -44,7 +44,7 @@ public class UserServiceClient : BaseServiceClient<UserDTO>, IUserServiceClient
 
     public async Task<Result<string>> LoginAsync(HttpPayload payload, LoginUserDTO dto)
     {
-        var client = await GetClient(payload);
+        var client = await GetClientAsync(payload);
 
         var postbody = JsonConvert.SerializeObject(dto);
 
@@ -92,7 +92,7 @@ public class BaseServiceClient<TDto> : IBaseServiceClient<TDto> where TDto : Bas
 
     public async Task<Result<List<TDto>>> GetAllAsync(HttpPayload payload)
     {
-        var client = await GetClient(payload);
+        var client = await GetClientAsync(payload);
 
         var body = new PostBody { };
 
@@ -107,7 +107,7 @@ public class BaseServiceClient<TDto> : IBaseServiceClient<TDto> where TDto : Bas
 
     public async Task<Result<List<TDto>>> GetAllAsync(HttpPayload payload, Pagination page)
     {
-        var client = await GetClient(payload);
+        var client = await GetClientAsync(payload);
         
         var body = new PostBody { Pagination = page };
         
@@ -122,7 +122,7 @@ public class BaseServiceClient<TDto> : IBaseServiceClient<TDto> where TDto : Bas
         
     public async Task<Result<List<TDto>>> GetAllAsync(HttpPayload payload, params Expression<Func<TDto, object>>[] includes)
     {
-        var client = await GetClient(payload);
+        var client = await GetClientAsync(payload);
         
         var body = new PostBody { };
         
@@ -142,7 +142,7 @@ public class BaseServiceClient<TDto> : IBaseServiceClient<TDto> where TDto : Bas
         
     public async Task<Result<List<TDto>>> GetAllAsync(HttpPayload payload, Pagination page, params Expression<Func<TDto, object>>[] includes)
     {
-        var client = await GetClient(payload);
+        var client = await GetClientAsync(payload);
         
         var body = new PostBody { Pagination = page };
         
@@ -162,7 +162,7 @@ public class BaseServiceClient<TDto> : IBaseServiceClient<TDto> where TDto : Bas
         
     public async Task<Result<List<TDto>>> GetAllWhereAsync(HttpPayload payload, Expression<Func<TDto, bool>> expression, params Expression<Func<TDto, object>>[] includes)
     {
-        var client = await GetClient(payload);
+        var client = await GetClientAsync(payload);
         
         PostBody body = new() { Expression = expression.Simplify().ToString() };
         
@@ -184,7 +184,7 @@ public class BaseServiceClient<TDto> : IBaseServiceClient<TDto> where TDto : Bas
         
     public async Task<Result<List<TDto>>> GetAllWhereAsync(HttpPayload payload, Expression<Func<TDto, bool>> expression, Pagination page, params Expression<Func<TDto, object>>[] includes)
     {
-        var client = await GetClient(payload);
+        var client = await GetClientAsync(payload);
         
         PostBody body = new() { Expression = expression.Simplify().ToString(), Pagination = page };
         
@@ -206,7 +206,7 @@ public class BaseServiceClient<TDto> : IBaseServiceClient<TDto> where TDto : Bas
         
     public async Task<Result<List<TDto>>> GetAllWhereAsync(HttpPayload payload, Expression<Func<TDto, bool>> expression)
     {
-        var client = await GetClient(payload);
+        var client = await GetClientAsync(payload);
         
         PostBody body = new() { Expression = expression.Simplify().ToString() };
         
@@ -223,7 +223,7 @@ public class BaseServiceClient<TDto> : IBaseServiceClient<TDto> where TDto : Bas
         
     public async Task<Result<List<TDto>>> GetAllWhereAsync(HttpPayload payload, Expression<Func<TDto, bool>> expression, Pagination page)
     {
-        var client = await GetClient(payload);
+        var client = await GetClientAsync(payload);
         
         PostBody body = new() { Expression = expression.Simplify().ToString(), Pagination = page };
         
@@ -240,7 +240,7 @@ public class BaseServiceClient<TDto> : IBaseServiceClient<TDto> where TDto : Bas
         
     public async Task<TDto> GetSingleWhereAsync(HttpPayload payload, Expression<Func<TDto, bool>> expression, params Expression<Func<TDto, object>>[] includes)
     {
-        var client = await GetClient(payload);
+        var client = await GetClientAsync(payload);
         
         PostBody body = new() { Expression = expression.Simplify().ToString() };
         
@@ -262,7 +262,7 @@ public class BaseServiceClient<TDto> : IBaseServiceClient<TDto> where TDto : Bas
         
     public async Task<TDto> GetSingleWhereAsync(HttpPayload payload, Expression<Func<TDto, bool>> expression)
     {
-        var client = await GetClient(payload);
+        var client = await GetClientAsync(payload);
         
         PostBody body = new() { Expression = expression.Simplify().ToString() };
         
@@ -281,7 +281,7 @@ public class BaseServiceClient<TDto> : IBaseServiceClient<TDto> where TDto : Bas
     {
         try
         {
-            var client = await GetClient(payload);
+            var client = await GetClientAsync(payload);
         
             var postbody = JsonConvert.SerializeObject(entityDTO);
         
@@ -301,7 +301,7 @@ public class BaseServiceClient<TDto> : IBaseServiceClient<TDto> where TDto : Bas
         
     public async Task<Result<TDto>> UpdateAsync(HttpPayload payload, TDto entityDTO)
     {
-        var client = await GetClient(payload);
+        var client = await GetClientAsync(payload);
         
         var postbody = JsonConvert.SerializeObject(entityDTO);
         
@@ -315,7 +315,7 @@ public class BaseServiceClient<TDto> : IBaseServiceClient<TDto> where TDto : Bas
         
     public async Task<Result> DeleteAsync(HttpPayload payload, string reference)
     {
-        var client = await GetClient(payload);
+        var client = await GetClientAsync(payload);
         
         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(""application/json""));
         
@@ -326,7 +326,7 @@ public class BaseServiceClient<TDto> : IBaseServiceClient<TDto> where TDto : Bas
         return JsonConvert.DeserializeObject<Result>(json);
     }
         
-    protected async Task<HttpClient> GetClient(HttpPayload payload)
+    protected async Task<HttpClient> GetClientAsync(HttpPayload payload)
     {
         var client = _httpClientFactory.CreateClient({project}WebConstants.ClientScope);
         

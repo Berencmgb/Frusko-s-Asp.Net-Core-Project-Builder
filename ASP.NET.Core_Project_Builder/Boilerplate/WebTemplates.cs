@@ -214,7 +214,7 @@ public class CreateUserViewModel
         public const string UserViewModelTemplate =
 @"namespace {project}.Web.ViewModels.User;
 
-public class UserViewModel
+public class UserViewModel : BaseViewModel
 {
     public string Email { get; set; }
     public string FirstName { get; set; }
@@ -326,7 +326,14 @@ public class UserController : BaseController
 
         return RedirectToAction(""index"", ""home"");
     }
-    
+
+    [HttpPost(""User/Logout"")]
+    public async Task<IActionResult> Logout()
+    {
+        await HttpContext.SignOutAsync();
+
+        return RedirectToAction(""index"", ""home"");
+    }    
 }
 ";
 

@@ -394,7 +394,7 @@ namespace ASP.NET.Core_Project_Builder
                 Console.WriteLine($"Directory Created: {$"{_absolutePath}\\{_serviceClientNamespace}"}");
             }
 
-            await File.WriteAllTextAsync($"{_absolutePath}\\{_serviceClientNamespace}\\AccountServiceClient.cs", ServiceClientTemplates.AccountServiceClientTemplate.Replace("{project}", SolutionPrefix));
+            await File.WriteAllTextAsync($"{_absolutePath}\\{_serviceClientNamespace}\\UserServiceClient.cs", ServiceClientTemplates.AccountServiceClientTemplate.Replace("{project}", SolutionPrefix));
             await File.WriteAllTextAsync($"{_absolutePath}\\{_serviceClientNamespace}\\BaseServiceClient.cs", ServiceClientTemplates.BaseServiceClientTemplate.Replace("{project}", SolutionPrefix).Replace("{namespace}", _serviceClientNamespace));
 
             return;
@@ -447,7 +447,7 @@ namespace ASP.NET.Core_Project_Builder
                 Console.WriteLine($"Directory Created: {$"{_absolutePath}\\{_repositoryNamespace}"}");
             }
 
-            await File.WriteAllTextAsync($"{_absolutePath}\\{_repositoryNamespace}\\AccountRepository.cs", RepositoryTemplates.AccountRepositoryTemplate.Replace("{project}", SolutionPrefix));
+            await File.WriteAllTextAsync($"{_absolutePath}\\{_repositoryNamespace}\\UserRepository.cs", RepositoryTemplates.AccountRepositoryTemplate.Replace("{project}", SolutionPrefix));
 
             Console.WriteLine("STEP: Generating base repository");
             await File.WriteAllTextAsync(@$"{_absolutePath}\\{_repositoryNamespace}\\BaseRepository.cs", RepositoryTemplates.BaseRepositoryTemplate.Replace("{namespace}", _repositoryNamespace).Replace("{project}", SolutionPrefix));
@@ -494,7 +494,7 @@ namespace ASP.NET.Core_Project_Builder
                 Console.WriteLine($"Directory Created: {$"{_absolutePath}\\{_serviceNamespace}"}");
             }
 
-            await File.WriteAllTextAsync($"{_absolutePath}\\{_serviceNamespace}\\AccountService.cs", ServiceTemplates.AccountService.Replace("{project}", SolutionPrefix));
+            await File.WriteAllTextAsync($"{_absolutePath}\\{_serviceNamespace}\\UserService.cs", ServiceTemplates.AccountService.Replace("{project}", SolutionPrefix));
 
             Console.WriteLine("STEP: Generating base service");
             await File.WriteAllTextAsync(@$"{_absolutePath}\\{_serviceNamespace}\\BaseService.cs", ServiceTemplates.BaseServiceTemplate.Replace("{namespace}", _serviceNamespace).Replace("{project}", SolutionPrefix));
@@ -612,7 +612,7 @@ namespace ASP.NET.Core_Project_Builder
             await File.WriteAllTextAsync($"{_absolutePath}\\{_webNamespace}\\ViewModels\\User\\LoginUserViewModel.cs", WebTemplates.LoginUserViewModelTemplate.Replace("{project}", SolutionPrefix));
             await File.WriteAllTextAsync($"{_absolutePath}\\{_webNamespace}\\MappingProfiles\\UserMappingProfile.cs", WebTemplates.UserMappingProfileTemplate.Replace("{project}", SolutionPrefix));
             await File.WriteAllTextAsync($"{_absolutePath}\\{_webNamespace}\\Controllers\\BaseController.cs", WebTemplates.BaseControllerTemplate.Replace("{project}", SolutionPrefix));
-            await File.WriteAllTextAsync($"{_absolutePath}\\{_webNamespace}\\Controllers\\AccountController.cs", WebTemplates.AccountControllerTemplate.Replace("{project}", SolutionPrefix));
+            await File.WriteAllTextAsync($"{_absolutePath}\\{_webNamespace}\\Controllers\\UserController.cs", WebTemplates.AccountControllerTemplate.Replace("{project}", SolutionPrefix));
             await File.WriteAllTextAsync($"{_absolutePath}\\{_webNamespace}\\Views\\User\\Register.cshtml", WebTemplates.RegisterHtmlTemplate.Replace("{project}", SolutionPrefix));
             await File.WriteAllTextAsync($"{_absolutePath}\\{_webNamespace}\\Views\\User\\Login.cshtml", WebTemplates.LoginHtmlTemplate.Replace("{project}", SolutionPrefix));
 
@@ -700,13 +700,16 @@ namespace ASP.NET.Core_Project_Builder
 
             await File.WriteAllTextAsync($"{_absolutePath}\\{_apiNamespace}\\Program.cs", ApiTemplates.ProgramTemplate.Replace("{project}", SolutionPrefix));
             await File.WriteAllTextAsync($"{_absolutePath}\\{_apiNamespace}\\Controllers\\BaseApiController.cs", ApiTemplates.BaseApiControllerTemplate.Replace("{project}", SolutionPrefix));
-            await File.WriteAllTextAsync($"{_absolutePath}\\{_apiNamespace}\\Controllers\\AccountController.cs", ApiTemplates.AccountControllerTemplate.Replace("{project}", SolutionPrefix));
+            await File.WriteAllTextAsync($"{_absolutePath}\\{_apiNamespace}\\Controllers\\UserController.cs", ApiTemplates.AccountControllerTemplate.Replace("{project}", SolutionPrefix));
             await File.WriteAllTextAsync($"{_absolutePath}\\{_apiNamespace}\\AppSettings.json", ApiTemplates.AppSettingsTemplate.Replace("{project}", SolutionPrefix));
             await File.WriteAllTextAsync($"{_absolutePath}\\{_apiNamespace}\\MappingProfiles\\UserMappingProfile.cs", ApiTemplates.UserMappingProfileTemplate.Replace("{project}", SolutionPrefix));
             await File.WriteAllTextAsync($"{_absolutePath}\\{_apiNamespace}\\MappingProfiles\\UtilitiesMappingProfile.cs", ApiTemplates.UtilitiesMappingProfileTemplate.Replace("{project}", SolutionPrefix));
 
             if (File.Exists($"{_absolutePath}\\{_apiNamespace}\\Controllers\\WeatherForecastController.cs"))
                 File.Delete($"{_absolutePath}\\{_apiNamespace}\\Controllers\\WeatherForecastController.cs");
+
+            if (File.Exists($"{_absolutePath}\\{_apiNamespace}\\WeatherForecast.cs"))
+                File.Delete($"{_absolutePath}\\{_apiNamespace}\\WeatherForecast.cs");
 
             if (!GenerateHostUrl)
                 return;
